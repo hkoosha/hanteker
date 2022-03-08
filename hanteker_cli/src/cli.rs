@@ -9,23 +9,23 @@ use hanteker_lib::device::cfg::{AwgType, Coupling, DeviceFunction, Probe, Scale,
 #[clap(author, version, about, long_about = None, trailing_var_arg = true)]
 pub(crate) struct Cli {
     #[clap(subcommand)]
-    pub sub_commands: Commands,
+    pub(crate) sub_commands: Commands,
 
     /// USB timeout in milliseconds
     #[clap(long, default_value_t = 1000)]
-    pub timeout: u64,
+    pub(crate) timeout: u64,
 
     /// Specify multiple time to increase log level from info
     #[clap(short, long, parse(from_occurrences))]
-    pub verbose: usize,
+    pub(crate) verbose: usize,
 
     /// Specify multiple times to decrease log level from info, takes precedence over --verbose
     #[clap(short, long, parse(from_occurrences))]
-    pub silent: usize,
+    pub(crate) silent: usize,
 
     #[clap(long)]
     /// Suppress warnings about UI quirks
-    pub no_quirks: bool,
+    pub(crate) no_quirks: bool,
 }
 
 #[derive(Subcommand, Debug)]
@@ -49,69 +49,69 @@ pub(crate) enum Commands {
 #[derive(Args, Debug)]
 pub(crate) struct DeviceCli {
     #[clap(long)]
-    pub start: bool,
+    pub(crate) start: bool,
 
     #[clap(long)]
-    pub stop: bool,
+    pub(crate) stop: bool,
 
     #[clap(short, long, arg_enum)]
-    pub mode: Option<DeviceFunction>,
+    pub(crate) mode: Option<DeviceFunction>,
 }
 
 #[derive(Args, Debug)]
 pub(crate) struct ScopeCli {
     #[clap(short, long, validator = channel_no_validator)]
-    pub channel: Vec<usize>,
+    pub(crate) channel: Vec<usize>,
 
     #[clap(long)]
-    pub enable_channel: bool,
+    pub(crate) enable_channel: bool,
 
     #[clap(long)]
-    pub disable_channel: bool,
+    pub(crate) disable_channel: bool,
 
     #[clap(long, arg_enum)]
-    pub coupling: Option<Coupling>,
+    pub(crate) coupling: Option<Coupling>,
 
     #[clap(long, arg_enum)]
-    pub probe: Option<Probe>,
+    pub(crate) probe: Option<Probe>,
 
     #[clap(long, arg_enum)]
-    pub scale: Option<Scale>,
+    pub(crate) scale: Option<Scale>,
 
     #[clap(long)]
-    pub offset: Option<f32>,
+    pub(crate) offset: Option<f32>,
 
     #[clap(long)]
-    pub enable_bandwidth_limit: bool,
+    pub(crate) enable_bandwidth_limit: bool,
 
     #[clap(long)]
-    pub disable_bandwidth_limit: bool,
+    pub(crate) disable_bandwidth_limit: bool,
 
     #[clap(long, arg_enum)]
-    pub time_scale: Option<TimeScale>,
+    pub(crate) time_scale: Option<TimeScale>,
 
     #[clap(long)]
-    pub time_offset: Option<f32>,
+    pub(crate) time_offset: Option<f32>,
 
     // TODO properly name arg in clap.
     /// Takes channel no
     #[clap(long)]
-    pub trigger_source: Option<usize>,
+    pub(crate) trigger_source: Option<usize>,
 
     #[clap(long, arg_enum)]
-    pub trigger_slope: Option<TriggerSlope>,
+    pub(crate) trigger_slope: Option<TriggerSlope>,
 
     #[clap(long, arg_enum)]
-    pub trigger_mode: Option<TriggerMode>,
+    pub(crate) trigger_mode: Option<TriggerMode>,
 
     #[clap(long)]
-    pub trigger_level: Option<f32>,
+    pub(crate) trigger_level: Option<f32>,
 
     #[clap(short = 'k', long)]
-    pub capture: bool,
+    pub(crate) capture: bool,
 
     #[clap(long, default_value_t = 1000)]
-    pub capture_chunk: usize,
+    pub(crate) capture_chunk: usize,
 }
 
 #[derive(Args, Debug)]
@@ -120,46 +120,46 @@ pub(crate) struct PrintCli {}
 #[derive(Args, Debug)]
 pub(crate) struct ShellCli {
     #[clap(short, long)]
-    pub name_override: Option<String>,
+    pub(crate) name_override: Option<String>,
 
     #[clap(short, long, arg_enum)]
-    pub shell: Shell,
+    pub(crate) shell: Shell,
 }
 
 #[derive(Args, Debug)]
 pub(crate) struct AwgCli {
     #[clap(short, long, arg_enum)]
-    pub r#type: Option<AwgType>,
+    pub(crate) r#type: Option<AwgType>,
 
     #[clap(short, long)]
-    pub frequency: Option<f32>,
+    pub(crate) frequency: Option<f32>,
 
     #[clap(short, long)]
-    pub amplitude: Option<f32>,
+    pub(crate) amplitude: Option<f32>,
 
     #[clap(short, long)]
-    pub offset: Option<f32>,
+    pub(crate) offset: Option<f32>,
 
     #[clap(long)]
-    pub duty_square: Option<f32>,
+    pub(crate) duty_square: Option<f32>,
 
     #[clap(long)]
-    pub duty_ramp: Option<f32>,
+    pub(crate) duty_ramp: Option<f32>,
 
     #[clap(long)]
-    pub duty_trap_rise: Option<f32>,
+    pub(crate) duty_trap_rise: Option<f32>,
 
     #[clap(long)]
-    pub duty_trap_high: Option<f32>,
+    pub(crate) duty_trap_high: Option<f32>,
 
     #[clap(long)]
-    pub duty_trap_low: Option<f32>,
+    pub(crate) duty_trap_low: Option<f32>,
 
     #[clap(long)]
-    pub stop: bool,
+    pub(crate) stop: bool,
 
     #[clap(long)]
-    pub start: bool,
+    pub(crate) start: bool,
 }
 
 
