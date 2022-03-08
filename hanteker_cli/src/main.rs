@@ -1,4 +1,5 @@
 use std::time::Duration;
+use anyhow::bail;
 
 use hanteker_lib::models::hantek2d42::Hantek2D42;
 use pretty_env_logger::formatted_builder;
@@ -33,6 +34,10 @@ fn main() -> anyhow::Result<()> {
     let cli = cli_parse();
 
     init_log(cli.silent, cli.verbose);
+
+    if cli.timeout < 0 {
+        bail!("invalid timeout, must be grater than or equal to zero");
+    }
 
     if let Commands::Shell(sub) = &cli.sub_commands {
         handle_shell(&cli, sub);
