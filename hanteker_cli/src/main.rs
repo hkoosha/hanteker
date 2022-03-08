@@ -1,17 +1,16 @@
+use std::{env, io};
 use std::str::FromStr;
 use std::time::Duration;
-use std::{env, io};
 
 use anyhow::bail;
 use clap::{Args, CommandFactory, Parser, Subcommand};
 use clap_complete::{generate, Shell};
-use log::warn;
-use pretty_env_logger::formatted_builder;
-
 use hanteker_lib::device::cfg::{
     AwgType, Coupling, DeviceFunction, Probe, Scale, TimeScale, TriggerMode, TriggerSlope,
 };
 use hanteker_lib::models::hantek2d42::Hantek2D42;
+use log::warn;
+use pretty_env_logger::formatted_builder;
 
 /// A cli tool to interface with Hantek oscilloscope
 #[derive(Parser, Debug)]
@@ -19,9 +18,6 @@ use hanteker_lib::models::hantek2d42::Hantek2D42;
 struct Cli {
     #[clap(subcommand)]
     sub_commands: Commands,
-
-    #[clap(long = "generate", arg_enum)]
-    generator: Option<Shell>,
 
     /// USB timeout in milliseconds
     #[clap(long, default_value_t = 1000)]
@@ -133,6 +129,9 @@ struct PrintCli {}
 struct ShellCli {
     #[clap(short, long)]
     name_override: Option<String>,
+
+    #[clap(short, long, arg_enum)]
+    shell: Shell,
 }
 
 #[derive(Args, Debug)]
@@ -233,21 +232,21 @@ fn main() -> anyhow::Result<()> {
             handle_print(&cli, &mut hantek)?
         }
         Commands::Shell(sub) => {
-            handle_shell(cli.generator, sub);
+            handle_shell(&cli, sub);
         }
     }
 
     Ok(())
 }
 
-fn handle_shell(shell: Option<Shell>, s: &ShellCli) {
+fn handle_shell(_parent: &Cli, s: &ShellCli) {
     let mut cmd = Cli::command();
     let name = match &s.name_override {
         Some(name) => name.clone(),
         None => env::args().into_iter().next().unwrap(),
     };
     generate(
-        shell.expect("shell type not specified"),
+        s.shell,
         &mut cmd,
         name,
         &mut io::stdout(),
