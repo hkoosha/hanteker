@@ -8,7 +8,6 @@ repository = "https://github.com/hkoosha/hanteker"
 
 [dependencies]
 log = "0.4"
-pretty_env_logger = "0.4"
 anyhow = "1.0"
 strum = "0.24"
 strum_macros = "0.24"

@@ -392,7 +392,7 @@ impl HantekConfig {
 
             device_function: None,
 
-            enabled_channels: vec![None; num_channels],
+            enabled_channels: (0..num_channels).map(|_| None).collect(),
             channel_coupling: (0..num_channels).map(|_| None).collect(),
             channel_probe: (0..num_channels).map(|_| None).collect(),
             channel_scale: (0..num_channels).map(|_| None).collect(),
