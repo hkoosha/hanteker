@@ -35,10 +35,6 @@ fn main() -> anyhow::Result<()> {
 
     init_log(cli.silent, cli.verbose);
 
-    if cli.timeout < 0 {
-        bail!("invalid timeout, must be grater than or equal to zero");
-    }
-
     if let Commands::Shell(sub) = &cli.sub_commands {
         handle_shell(&cli, sub);
     } else {
