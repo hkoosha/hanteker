@@ -8,6 +8,10 @@ build:
 fmt:
 	cargo fmt
 
+.PHONY: clippy
+clippy:
+	cargo clippy
+
 
 .PHONY: run-raw
 run-raw:

@@ -2,6 +2,14 @@
 build:
 	cargo build
 
+.PHONY: fmt
+fmt:
+	cargo fmt
+
+.PHONY: clippy
+clippy:
+	cargo clippy
+
 .PHONY: run
 run:
 	cargo build

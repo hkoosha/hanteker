@@ -507,11 +507,11 @@ impl<'a> Hantek2D42<'a> {
         while count < (num_samples as usize) {
             let length = if (num_samples * num_channels) - count < 64 { num_samples - count } else { 64 };
             self.write(&cmd)?;
-            let mut buf = &mut buffer[count..(count + length)];
+            let buf = &mut buffer[count..(count + length)];
             // println!("{}, {}, {:?}", count, length, &buf);
             let endpoint = 0x80 | 1;
             let actual_len = self.usb.handle.read_bulk(
-                endpoint, &mut buf, self.config.get_timeout())?;
+                endpoint, buf, self.config.get_timeout())?;
             count += actual_len;
         }
 

@@ -1,7 +1,10 @@
 [package]
 name = "hanteker_lib"
+description = "Library to interface with Hantek handheld osilloscope (Hantek 2D42 and 2D72)"
 version = "0.1.0"
 edition = "2021"
+license = "GPL-3.0"
+repository = "https://github.com/hkoosha/hanteker"
 
 [dependencies]
 log = "0.4"
@@ -10,7 +13,7 @@ anyhow = "1.0"
 strum = "0.24"
 strum_macros = "0.24"
 
-clap = { version = "3.1", features = [] }
+clap = { version = "3.1", features = ["derive"] }
 
 libusb = "0.3"
 

@@ -137,29 +137,22 @@ impl<'a> HantekUsbDevice<'a> {
 
     pub fn pretty_printed_device_info(&self) -> String {
         format!(
-            "{}\n{}\n{}",
-            format!(
-                "USB Bus={:03} Device={:03} ID={:04X}:{:04X} Speed={}",
-                self.device.bus_number(),
-                self.device.address(),
-                self.pid(),
-                self.vid(),
-                match self.device.speed() {
-                    Speed::Unknown => "Unknown",
-                    Speed::Low => "Low (1.5MPps)",
-                    Speed::Full => "Full (12MBps)",
-                    Speed::High => "High (480MBps)",
-                    Speed::Super => "Super (5000MBps)",
-                },
-            ),
-            format!(
-                "manufacturer={}",
-                self.get_manufacturer().unwrap_or("ERROR".to_string())
-            ),
-            format!(
-                "product={}",
-                self.get_product().unwrap_or("ERROR".to_string())
-            ),
+            "USB Bus={:03} Device={:03} ID={:04X}:{:04X} Speed={}\n\
+            manufacturer={}\n\
+            product={}",
+            self.device.bus_number(),
+            self.device.address(),
+            self.pid(),
+            self.vid(),
+            match self.device.speed() {
+                Speed::Unknown => "Unknown",
+                Speed::Low => "Low (1.5MPps)",
+                Speed::Full => "Full (12MBps)",
+                Speed::High => "High (480MBps)",
+                Speed::Super => "Super (5000MBps)",
+            },
+            self.get_manufacturer().unwrap_or_else(|_| "ERROR".to_string()),
+            self.get_product().unwrap_or_else(|_| "ERROR".to_string()),
         )
     }
 

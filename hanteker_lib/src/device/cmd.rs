@@ -17,6 +17,7 @@ pub struct HantekCommand {
     last: u8,
 }
 
+#[allow(clippy::from_over_into)]
 impl Into<RawCommand> for HantekCommand {
     fn into(self) -> RawCommand {
         let mut as_array = [0u8; 10];
@@ -191,5 +192,11 @@ impl HantekCommandBuilder {
             val: self.val.expect("val not set"),
             last: self.last.expect("last not set"),
         }
+    }
+}
+
+impl Default for HantekCommandBuilder {
+    fn default() -> Self {
+        Self::new()
     }
 }

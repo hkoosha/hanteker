@@ -192,7 +192,7 @@ fn init_log(silent: usize, verbose: usize) {
     if silent == 1 {
         builder.parse_filters("WARN");
     } else if silent == 2 {
-        builder.parse_filters("WARN");
+        builder.parse_filters("ERROR");
     } else if silent > 2 {
         builder.parse_filters("");
     } else if verbose == 1 {
@@ -244,7 +244,7 @@ fn handle_shell(shell: Option<Shell>, s: &ShellCli) {
     let mut cmd = Cli::command();
     let name = match &s.name_override {
         Some(name) => name.clone(),
-        None => env::args().into_iter().next().unwrap().to_string(),
+        None => env::args().into_iter().next().unwrap(),
     };
     generate(
         shell.expect("shell type not specified"),

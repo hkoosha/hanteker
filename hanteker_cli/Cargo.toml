@@ -1,7 +1,11 @@
 [package]
 name = "hanteker_cli"
+description = "CLI tool to interface with Hantek handheld osilloscope (Hantek 2D42 and 2D72)"
 version = "0.1.0"
 edition = "2021"
+license = "GPL-3.0"
+repository = "https://github.com/hkoosha/hanteker"
+categories = ["command-line-utilities"]
 
 [dependencies]
 log = "0.4"
