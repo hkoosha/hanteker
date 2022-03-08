@@ -1,5 +1,4 @@
 #![allow(non_upper_case_globals)]
-#![allow(dead_code)]
 
 pub const VENDOR_ID__2D42: u16 = 0x0483;
 pub const PRODUCT_ID__2D42: u16 = 0x2d42;
@@ -11,15 +10,15 @@ pub const FUNC_SCREEN_SETTING: u16 = 0x0003;
 
 pub const SCOPE_ENABLE_CH1: u8 = 0x00;
 pub const SCOPE_COUPLING_CH1: u8 = 0x01;
-pub const SCOPE_PROBEX_CH1: u8 = 0x02;
-pub const SCOPE_BWLIMIT_CH1: u8 = 0x03;
+pub const SCOPE_PROBE_X_CH1: u8 = 0x02;
+pub const SCOPE_BW_LIMIT_CH1: u8 = 0x03;
 pub const SCOPE_SCALE_CH1: u8 = 0x04;
 pub const SCOPE_OFFSET_CH1: u8 = 0x05;
 
 pub const SCOPE_ENABLE_CH2: u8 = 0x06;
 pub const SCOPE_COUPLING_CH2: u8 = 0x07;
-pub const SCOPE_PROBEX_CH2: u8 = 0x08;
-pub const SCOPE_BWLIMIT_CH2: u8 = 0x09;
+pub const SCOPE_PROBE_X_CH2: u8 = 0x08;
+pub const SCOPE_BW_LIMIT_CH2: u8 = 0x09;
 pub const SCOPE_SCALE_CH2: u8 = 0x0A;
 pub const SCOPE_OFFSET_CH2: u8 = 0x0B;
 
@@ -33,6 +32,8 @@ pub const SCOPE_TRIGGER_SLOPE: u8 = 0x11;
 pub const SCOPE_TRIGGER_MODE: u8 = 0x12;
 pub const SCOPE_TRIGGER_LEVEL: u8 = 0x14;
 
+// TODO how to send this to device?
+#[allow(dead_code)]
 pub const SCOPE_AUTO_SETTING: u8 = 0x13;
 
 pub const SCOPE_START_RECV: u8 = 0x16;
@@ -41,10 +42,10 @@ pub const SCOPE_VAL_COUPLING_AC: u8 = 0x00;
 pub const SCOPE_VAL_COUPLING_DC: u8 = 0x01;
 pub const SCOPE_VAL_COUPLING_GND: u8 = 0x02;
 
-pub const SCOPE_VAL_PROBEX1: u8 = 0x00;
-pub const SCOPE_VAL_PROBEX10: u8 = 0x01;
-pub const SCOPE_VAL_PROBEX100: u8 = 0x02;
-pub const SCOPE_VAL_PROBEX1000: u8 = 0x03;
+pub const SCOPE_VAL_PROBE_X1: u8 = 0x00;
+pub const SCOPE_VAL_PROBE_X10: u8 = 0x01;
+pub const SCOPE_VAL_PROBE_X100: u8 = 0x02;
+pub const SCOPE_VAL_PROBE_X1000: u8 = 0x03;
 
 pub const SCOPE_VAL_SCALE_10mV: u8 = 0x00;
 pub const SCOPE_VAL_SCALE_20mV: u8 = 0x01;

@@ -204,7 +204,11 @@ impl<'a> Hantek2D42<'a> {
                 2 => SCOPE_COUPLING_CH2,
                 _ => panic!("unknown channel={}", channel_no),
             })
-            .set_val0(coupling.raw_value())
+            .set_val0(match coupling {
+                Coupling::AC => SCOPE_VAL_COUPLING_AC,
+                Coupling::DC => SCOPE_VAL_COUPLING_DC,
+                Coupling::GND => SCOPE_VAL_COUPLING_GND,
+            })
             .set_last(0)
             .build()
             .into();
@@ -243,11 +247,16 @@ impl<'a> Hantek2D42<'a> {
             .set_boh(BOH)
             .set_func(FUNC_SCOPE_SETTING)
             .set_cmd(match channel_no {
-                1 => SCOPE_PROBEX_CH1,
-                2 => SCOPE_PROBEX_CH2,
+                1 => SCOPE_PROBE_X_CH1,
+                2 => SCOPE_PROBE_X_CH2,
                 _ => panic!("unknown channel={}", channel_no),
             })
-            .set_val0(probe.raw_value())
+            .set_val0(match probe {
+                Probe::X1 => SCOPE_VAL_PROBE_X1,
+                Probe::X10 => SCOPE_VAL_PROBE_X10,
+                Probe::X100 => SCOPE_VAL_PROBE_X100,
+                Probe::X1000 => SCOPE_VAL_PROBE_X1000,
+            })
             .set_last(0)
             .build()
             .into();
@@ -290,7 +299,18 @@ impl<'a> Hantek2D42<'a> {
                 2 => SCOPE_SCALE_CH2,
                 _ => panic!("unknown channel={}", channel_no),
             })
-            .set_val0(scale.raw_order())
+            .set_val0(match scale {
+                Scale::mv10 => SCOPE_VAL_SCALE_10mV,
+                Scale::mv20 => SCOPE_VAL_SCALE_20mV,
+                Scale::mv50 => SCOPE_VAL_SCALE_50mV,
+                Scale::mv100 => SCOPE_VAL_SCALE_100mV,
+                Scale::mv200 => SCOPE_VAL_SCALE_200mV,
+                Scale::mv500 => SCOPE_VAL_SCALE_500mV,
+                Scale::v1 => SCOPE_VAL_SCALE_1V,
+                Scale::v2 => SCOPE_VAL_SCALE_2V,
+                Scale::v5 => SCOPE_VAL_SCALE_5V,
+                Scale::v10 => SCOPE_VAL_SCALE_10V,
+            })
             .set_last(0)
             .build()
             .into();
@@ -406,8 +426,8 @@ impl<'a> Hantek2D42<'a> {
             .set_boh(BOH)
             .set_func(FUNC_SCOPE_SETTING)
             .set_cmd(match channel_no {
-                1 => SCOPE_BWLIMIT_CH1,
-                2 => SCOPE_BWLIMIT_CH2,
+                1 => SCOPE_BW_LIMIT_CH1,
+                2 => SCOPE_BW_LIMIT_CH2,
                 _ => panic!("unknown channel={}", channel_no),
             })
             .set_val0(raw_value)
@@ -441,8 +461,8 @@ impl<'a> Hantek2D42<'a> {
             .set_boh(BOH)
             .set_func(FUNC_SCOPE_SETTING)
             .set_cmd(match channel_no {
-                1 => SCOPE_BWLIMIT_CH1,
-                2 => SCOPE_BWLIMIT_CH2,
+                1 => SCOPE_BW_LIMIT_CH1,
+                2 => SCOPE_BW_LIMIT_CH2,
                 _ => panic!("unknown channel={}", channel_no),
             })
             .set_val0(raw_value)
@@ -521,12 +541,49 @@ impl<'a> Hantek2D42<'a> {
     /// ================================================================== SCOPE
 
     pub fn set_time_scale(&mut self, time_scale: TimeScale) -> anyhow::Result<()> {
+        let raw = match time_scale {
+            TimeScale::ns5 => SCOPE_VAL_SCALE_TIME_5ns,
+            TimeScale::ns10 => SCOPE_VAL_SCALE_TIME_10ns,
+            TimeScale::ns20 => SCOPE_VAL_SCALE_TIME_20ns,
+            TimeScale::ns50 => SCOPE_VAL_SCALE_TIME_50ns,
+            TimeScale::ns100 => SCOPE_VAL_SCALE_TIME_100ns,
+            TimeScale::ns200 => SCOPE_VAL_SCALE_TIME_200ns,
+            TimeScale::ns500 => SCOPE_VAL_SCALE_TIME_500ns,
+            TimeScale::us1 => SCOPE_VAL_SCALE_TIME_1us,
+            TimeScale::us2 => SCOPE_VAL_SCALE_TIME_2us,
+            TimeScale::us5 => SCOPE_VAL_SCALE_TIME_5us,
+            TimeScale::us10 => SCOPE_VAL_SCALE_TIME_10us,
+            TimeScale::us20 => SCOPE_VAL_SCALE_TIME_20us,
+            TimeScale::us50 => SCOPE_VAL_SCALE_TIME_50us,
+            TimeScale::us100 => SCOPE_VAL_SCALE_TIME_100us,
+            TimeScale::us200 => SCOPE_VAL_SCALE_TIME_200us,
+            TimeScale::us500 => SCOPE_VAL_SCALE_TIME_500us,
+            TimeScale::ms1 => SCOPE_VAL_SCALE_TIME_1ms,
+            TimeScale::ms2 => SCOPE_VAL_SCALE_TIME_2ms,
+            TimeScale::ms5 => SCOPE_VAL_SCALE_TIME_5ms,
+            TimeScale::ms10 => SCOPE_VAL_SCALE_TIME_10ms,
+            TimeScale::ms20 => SCOPE_VAL_SCALE_TIME_20ms,
+            TimeScale::ms50 => SCOPE_VAL_SCALE_TIME_50ms,
+            TimeScale::ms100 => SCOPE_VAL_SCALE_TIME_100ms,
+            TimeScale::ms200 => SCOPE_VAL_SCALE_TIME_200ms,
+            TimeScale::ms500 => SCOPE_VAL_SCALE_TIME_500ms,
+            TimeScale::s1 => SCOPE_VAL_SCALE_TIME_1s,
+            TimeScale::s2 => SCOPE_VAL_SCALE_TIME_2s,
+            TimeScale::s5 => SCOPE_VAL_SCALE_TIME_5s,
+            TimeScale::s10 => SCOPE_VAL_SCALE_TIME_10s,
+            TimeScale::s20 => SCOPE_VAL_SCALE_TIME_20s,
+            TimeScale::s50 => SCOPE_VAL_SCALE_TIME_50s,
+            TimeScale::s100 => SCOPE_VAL_SCALE_TIME_100s,
+            TimeScale::s200 => SCOPE_VAL_SCALE_TIME_200s,
+            TimeScale::s500 => SCOPE_VAL_SCALE_TIME_500s,
+        };
+
         let cmd: RawCommand = HantekCommandBuilder::new()
             .set_idx(IDX)
             .set_boh(BOH)
             .set_func(FUNC_SCOPE_SETTING)
             .set_cmd(SCOPE_SCALE_TIME)
-            .set_val0(time_scale.raw_value())
+            .set_val0(raw)
             .set_last(0)
             .build()
             .into();
@@ -537,10 +594,10 @@ impl<'a> Hantek2D42<'a> {
         if result.is_ok() {
             debug!("time scale set, time_scale={}", time_scale.my_to_string());
             self.config.set_time_offset_adjustment(
-                15.0 * (time_scale.raw_value() as f32),
-                -15.0 * (time_scale.raw_value() as f32),
-                (time_scale.raw_value() as f32) / 25.0,
-                time_scale.raw_value() as f32,
+                15.0 * (raw as f32),
+                -15.0 * (raw as f32),
+                (raw as f32) / 25.0,
+                raw as f32,
             );
             self.config.set_time_scale(time_scale);
             Ok(())
@@ -580,7 +637,7 @@ impl<'a> Hantek2D42<'a> {
             .set_idx(IDX)
             .set_boh(BOH)
             .set_func(FUNC_SCOPE_SETTING)
-            .set_cmd(SCOPE_SCALE_TIME)
+            .set_cmd(SCOPE_OFFSET_TIME)
             .set_val_u32(dev_time_offset as u32)
             .set_last(0)
             .build()
@@ -664,7 +721,11 @@ impl<'a> Hantek2D42<'a> {
             .set_boh(BOH)
             .set_func(FUNC_SCOPE_SETTING)
             .set_cmd(SCOPE_TRIGGER_SLOPE)
-            .set_val0(trigger_slope.raw_value())
+            .set_val0(match trigger_slope {
+                TriggerSlope::Rising => SCOPE_VAL_TRIGGER_SLOPE_RISING,
+                TriggerSlope::Falling => SCOPE_VAL_TRIGGER_SLOPE_FALLING,
+                TriggerSlope::Both => SCOPE_VAL_TRIGGER_SLOPE_BOTH,
+            })
             .set_last(0)
             .build()
             .into();
@@ -697,7 +758,11 @@ impl<'a> Hantek2D42<'a> {
             .set_boh(BOH)
             .set_func(FUNC_SCOPE_SETTING)
             .set_cmd(SCOPE_TRIGGER_MODE)
-            .set_val0(trigger_mode.raw_value())
+            .set_val0(match trigger_mode {
+                TriggerMode::Auto => SCOPE_VAL_TRIGGER_MODE_AUTO,
+                TriggerMode::Normal => SCOPE_VAL_TRIGGER_MODE_NORMAL,
+                TriggerMode::Single => SCOPE_VAL_TRIGGER_MODE_SINGLE,
+            })
             .set_last(0)
             .build()
             .into();
@@ -792,7 +857,16 @@ impl<'a> Hantek2D42<'a> {
             .set_boh(BOH)
             .set_func(FUNC_AWG_SETTING)
             .set_cmd(AWG_TYPE)
-            .set_val0(awg_type.raw_value())
+            .set_val0(match awg_type {
+                AwgType::Square => AWG_VAL_TYPE_SQUARE,
+                AwgType::Ramp => AWG_VAL_TYPE_RAMP,
+                AwgType::Sin => AWG_VAL_TYPE_SIN,
+                AwgType::Trap => AWG_VAL_TYPE_TRAP,
+                AwgType::Arb1 => AWG_VAL_TYPE_ARB1,
+                AwgType::Arb2 => AWG_VAL_TYPE_ARB2,
+                AwgType::Arb3 => AWG_VAL_TYPE_ARB3,
+                AwgType::Arb4 => AWG_VAL_TYPE_ARB4,
+            })
             .set_last(0)
             .build()
             .into();

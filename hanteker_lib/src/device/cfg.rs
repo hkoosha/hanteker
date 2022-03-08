@@ -78,21 +78,13 @@ impl RunningStatus {
 pub enum Coupling {
     AC,
     DC,
-    Ground,
+    GND,
 }
 
 impl Coupling {
     // Because CLion doesn't like the Display implemented by strum.
     pub fn my_to_string(&self) -> impl std::fmt::Display + '_ {
         self
-    }
-
-    pub fn raw_value(&self) -> u8 {
-        match self {
-            Self::AC => 0,
-            Self::DC => 1,
-            Self::Ground => 2,
-        }
     }
 }
 
@@ -108,15 +100,6 @@ impl Probe {
     // Because CLion doesn't like the Display implemented by strum.
     pub fn my_to_string(&self) -> impl std::fmt::Display + '_ {
         self
-    }
-
-    pub fn raw_value(&self) -> u8 {
-        match self {
-            Self::X1 => 0,
-            Self::X10 => 1,
-            Self::X100 => 2,
-            Self::X1000 => 3,
-        }
     }
 }
 
@@ -142,24 +125,6 @@ impl Scale {
     // Because CLion doesn't like the Display implemented by strum.
     pub fn my_to_string(&self) -> impl std::fmt::Display + '_ {
         self
-    }
-
-    pub fn raw_order(&self) -> u8 {
-        match self {
-            Self::mv10 => 0,
-            Self::mv20 => 1,
-            Self::mv50 => 2,
-            Self::mv100 => 3,
-            Self::mv200 => 4,
-            Self::mv500 => 5,
-            Self::v1 => 6,
-            Self::v2 => 7,
-            Self::v5 => 8,
-            Self::v10 => 9,
-            // Self::V20 => ?,
-            // Self::V50 => ?,
-            // Self::V100 => ?,
-        }
     }
 
     pub fn raw_value(&self) -> f32 {
@@ -225,45 +190,6 @@ impl TimeScale {
     pub fn my_to_string(&self) -> impl std::fmt::Display + '_ {
         self
     }
-
-    pub fn raw_value(&self) -> u8 {
-        match self {
-            Self::ns5 => 0,
-            Self::ns10 => 1,
-            Self::ns20 => 2,
-            Self::ns50 => 3,
-            Self::ns100 => 4,
-            Self::ns200 => 5,
-            Self::ns500 => 6,
-            Self::us1 => 7,
-            Self::us2 => 8,
-            Self::us5 => 9,
-            Self::us10 => 10,
-            Self::us20 => 11,
-            Self::us50 => 12,
-            Self::us100 => 13,
-            Self::us200 => 14,
-            Self::us500 => 15,
-            Self::ms1 => 16,
-            Self::ms2 => 17,
-            Self::ms5 => 18,
-            Self::ms10 => 19,
-            Self::ms20 => 20,
-            Self::ms50 => 21,
-            Self::ms100 => 22,
-            Self::ms200 => 23,
-            Self::ms500 => 24,
-            Self::s1 => 25,
-            Self::s2 => 26,
-            Self::s5 => 27,
-            Self::s10 => 28,
-            Self::s20 => 29,
-            Self::s50 => 30,
-            Self::s100 => 31,
-            Self::s200 => 32,
-            Self::s500 => 33,
-        }
-    }
 }
 
 #[allow(non_camel_case_types)]
@@ -279,14 +205,6 @@ impl TriggerSlope {
     pub fn my_to_string(&self) -> impl std::fmt::Display + '_ {
         self
     }
-
-    pub fn raw_value(&self) -> u8 {
-        match self {
-            Self::Rising => 0,
-            Self::Falling => 1,
-            Self::Both => 2,
-        }
-    }
 }
 
 #[allow(non_camel_case_types)]
@@ -301,14 +219,6 @@ impl TriggerMode {
     // Because CLion doesn't like the Display implemented by strum.
     pub fn my_to_string(&self) -> impl std::fmt::Display + '_ {
         self
-    }
-
-    pub fn raw_value(&self) -> u8 {
-        match self {
-            Self::Auto => 0,
-            Self::Normal => 1,
-            Self::Single => 2,
-        }
     }
 }
 
@@ -329,19 +239,6 @@ impl AwgType {
     // Because CLion doesn't like the Display implemented by strum.
     pub fn my_to_string(&self) -> impl std::fmt::Display + '_ {
         self
-    }
-
-    pub fn raw_value(&self) -> u8 {
-        match self {
-            AwgType::Square => 0,
-            AwgType::Ramp => 1,
-            AwgType::Sin => 2,
-            AwgType::Trap => 3,
-            AwgType::Arb1 => 4,
-            AwgType::Arb2 => 5,
-            AwgType::Arb3 => 6,
-            AwgType::Arb4 => 7,
-        }
     }
 }
 
