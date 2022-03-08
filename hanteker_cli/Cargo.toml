@@ -6,6 +6,7 @@ edition = "2021"
 license = "GPL-3.0"
 repository = "https://github.com/hkoosha/hanteker"
 categories = ["command-line-utilities"]
+readme = "README.md"
 
 [dependencies]
 log = "0.4"
