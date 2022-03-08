@@ -1,0 +1,9 @@
+[workspace]
+
+members = [
+    "hanteker_lib",
+    "hanteker_cli",
+    "hanteker_tui",
+    "hanteker_gui",
+]
+
