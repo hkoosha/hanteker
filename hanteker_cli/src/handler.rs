@@ -1,22 +1,17 @@
 use std::{env, io};
 
+use crate::cli::{cli_command, AwgCli, Cli, DeviceCli, ScopeCli, ShellCli};
 use anyhow::bail;
 use clap_complete::generate;
 use hanteker_lib::models::hantek2d42::Hantek2D42;
 use log::warn;
-use crate::cli::{AwgCli, Cli, cli_command, DeviceCli, ScopeCli, ShellCli};
 
 pub(crate) fn handle_shell(_parent: &Cli, s: &ShellCli) {
     let name = match &s.name_override {
         Some(name) => name.clone(),
         None => env::args().into_iter().next().unwrap(),
     };
-    generate(
-        s.shell,
-        &mut cli_command(),
-        name,
-        &mut io::stdout(),
-    );
+    generate(s.shell, &mut cli_command(), name, &mut io::stdout());
 }
 
 pub(crate) fn handle_print(_parent: &Cli, hantek: &mut Hantek2D42) -> anyhow::Result<()> {
@@ -24,7 +19,11 @@ pub(crate) fn handle_print(_parent: &Cli, hantek: &mut Hantek2D42) -> anyhow::Re
     Ok(())
 }
 
-pub(crate) fn handle_device(_parent: &Cli, cli: &DeviceCli, hantek: &mut Hantek2D42) -> anyhow::Result<()> {
+pub(crate) fn handle_device(
+    _parent: &Cli,
+    cli: &DeviceCli,
+    hantek: &mut Hantek2D42,
+) -> anyhow::Result<()> {
     if cli.start && cli.stop {
         bail!("must not specify start and stop at the same time.");
     }
@@ -43,7 +42,11 @@ pub(crate) fn handle_device(_parent: &Cli, cli: &DeviceCli, hantek: &mut Hantek2
     Ok(())
 }
 
-pub(crate) fn handle_scope(_parent: &Cli, cli: &ScopeCli, hantek: &mut Hantek2D42) -> anyhow::Result<()> {
+pub(crate) fn handle_scope(
+    _parent: &Cli,
+    cli: &ScopeCli,
+    hantek: &mut Hantek2D42,
+) -> anyhow::Result<()> {
     if cli.enable_channel && cli.disable_channel {
         bail!("must not specify disable-channel and enable-channel at the same time.");
     }
@@ -125,11 +128,15 @@ pub(crate) fn handle_scope(_parent: &Cli, cli: &ScopeCli, hantek: &mut Hantek2D4
     Ok(())
 }
 
-pub(crate) fn handle_awg(parent: &Cli, cli: &AwgCli, hantek: &mut Hantek2D42) -> anyhow::Result<()> {
+pub(crate) fn handle_awg(
+    parent: &Cli,
+    cli: &AwgCli,
+    hantek: &mut Hantek2D42,
+) -> anyhow::Result<()> {
     if (cli.duty_trap_high.is_some() || cli.duty_trap_low.is_some() || cli.duty_trap_rise.is_some())
         && (cli.duty_trap_high.is_none()
-        || cli.duty_trap_rise.is_none()
-        || cli.duty_trap_low.is_none())
+            || cli.duty_trap_rise.is_none()
+            || cli.duty_trap_low.is_none())
     {
         bail!("When specifying duty for trap, all three duties must be specified at the same time: high, low and rise.");
     }

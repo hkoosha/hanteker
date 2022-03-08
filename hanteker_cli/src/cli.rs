@@ -2,7 +2,9 @@ use std::str::FromStr;
 
 use clap::{Args, CommandFactory, Parser, Subcommand};
 use clap_complete::Shell;
-use hanteker_lib::device::cfg::{AwgType, Coupling, DeviceFunction, Probe, Scale, TimeScale, TriggerMode, TriggerSlope};
+use hanteker_lib::device::cfg::{
+    AwgType, Coupling, DeviceFunction, Probe, Scale, TimeScale, TriggerMode, TriggerSlope,
+};
 
 /// A cli tool to interface with Hantek oscilloscope
 #[derive(Parser, Debug)]
@@ -161,7 +163,6 @@ pub(crate) struct AwgCli {
     #[clap(long)]
     pub(crate) start: bool,
 }
-
 
 pub(crate) fn cli_command() -> clap::Command<'static> {
     Cli::command()

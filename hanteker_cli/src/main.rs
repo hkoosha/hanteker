@@ -34,29 +34,17 @@ fn main() -> anyhow::Result<()> {
 
     init_log(cli.silent, cli.verbose);
 
-    match &cli.sub_commands {
-        Commands::Awg(sub) => {
-            let context = libusb::Context::new()?;
-            let mut hantek = Hantek2D42::open(&context, Duration::from_millis(cli.timeout))?;
-            handle_awg(&cli, sub, &mut hantek)?
-        }
-        Commands::Device(sub) => {
-            let context = libusb::Context::new()?;
-            let mut hantek = Hantek2D42::open(&context, Duration::from_millis(cli.timeout))?;
-            handle_device(&cli, sub, &mut hantek)?
-        }
-        Commands::Scope(sub) => {
-            let context = libusb::Context::new()?;
-            let mut hantek = Hantek2D42::open(&context, Duration::from_millis(cli.timeout))?;
-            handle_scope(&cli, sub, &mut hantek)?
-        }
-        Commands::Print(_) => {
-            let context = libusb::Context::new()?;
-            let mut hantek = Hantek2D42::open(&context, Duration::from_millis(cli.timeout))?;
-            handle_print(&cli, &mut hantek)?
-        }
-        Commands::Shell(sub) => {
-            handle_shell(&cli, sub);
+    if let Commands::Shell(sub) = &cli.sub_commands {
+        handle_shell(&cli, sub);
+    } else {
+        let context = libusb::Context::new()?;
+        let mut hantek = Hantek2D42::open(&context, Duration::from_millis(cli.timeout))?;
+        match &cli.sub_commands {
+            Commands::Awg(sub) => handle_awg(&cli, sub, &mut hantek)?,
+            Commands::Device(sub) => handle_device(&cli, sub, &mut hantek)?,
+            Commands::Scope(sub) => handle_scope(&cli, sub, &mut hantek)?,
+            Commands::Print(_) => handle_print(&cli, &mut hantek)?,
+            _ => unreachable!(),
         }
     }
 
