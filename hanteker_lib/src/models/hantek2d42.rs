@@ -65,10 +65,7 @@ impl<'a> Hantek2D42<'a> {
                 error,
                 failed_action: "sending Start command to device",
             })
-            .and_then(|_| {
-                self.config.start();
-                Ok(())
-            })
+            .map(|_| self.config.start())
     }
 
     pub fn stop(&mut self) -> Result<(), Hantek2D42Error> {
@@ -83,10 +80,7 @@ impl<'a> Hantek2D42<'a> {
                 error,
                 failed_action: "sending Stop command to device",
             })
-            .and_then(|_| {
-                self.config.stop();
-                Ok(())
-            })
+            .map(|_| self.config.stop())
     }
 
     pub fn set_device_function(&mut self, function: DeviceFunction) -> Result<(), Hantek2D42Error> {
@@ -105,10 +99,7 @@ impl<'a> Hantek2D42<'a> {
                 error,
                 failed_action: "setting device function",
             })
-            .and_then(|_| {
-                self.config.set_device_function(function);
-                Ok(())
-            })
+            .map(|_| self.config.set_device_function(function))
     }
 
     /// ================================================================ CHANNEL
@@ -131,10 +122,7 @@ impl<'a> Hantek2D42<'a> {
                 error,
                 failed_action: "enabling channel",
             })
-            .and_then(|_| {
-                self.config.enable_channel(channel_no);
-                Ok(())
-            })
+            .map(|_| self.config.enable_channel(channel_no))
     }
 
     pub fn disable_channel(&mut self, channel_no: usize) -> Result<(), Hantek2D42Error> {
@@ -155,10 +143,7 @@ impl<'a> Hantek2D42<'a> {
                 error,
                 failed_action: "disabling channel",
             })
-            .and_then(|_| {
-                self.config.disable_channel(channel_no);
-                Ok(())
-            })
+            .map(|_| self.config.disable_channel(channel_no))
     }
 
     pub fn set_channel_coupling(
@@ -187,10 +172,7 @@ impl<'a> Hantek2D42<'a> {
                 error,
                 failed_action: "setting channel coupling",
             })
-            .and_then(|_| {
-                self.config.set_channel_coupling(channel_no, coupling);
-                Ok(())
-            })
+            .map(|_| self.config.set_channel_coupling(channel_no, coupling))
     }
 
     pub fn set_channel_probe(
@@ -220,10 +202,7 @@ impl<'a> Hantek2D42<'a> {
                 error,
                 failed_action: "setting chanel probe",
             })
-            .and_then(|_| {
-                self.config.set_channel_probe(channel_no, probe);
-                Ok(())
-            })
+            .map(|_| self.config.set_channel_probe(channel_no, probe))
     }
 
     pub fn set_channel_scale(
@@ -259,14 +238,13 @@ impl<'a> Hantek2D42<'a> {
                 error,
                 failed_action: "setting channel scale",
             })
-            .and_then(|_| {
+            .map(|_| {
                 self.config.set_channel_adjustment(
                     channel_no,
                     4.0 * scale.raw_value(),
                     -4.0 * scale.raw_value(),
                 );
                 self.config.set_channel_scale(channel_no, scale);
-                Ok(())
             })
     }
 
@@ -325,10 +303,7 @@ impl<'a> Hantek2D42<'a> {
                 error,
                 failed_action: "setting channel offset",
             })
-            .and_then(|_| {
-                self.config.set_channel_offset(channel_no, offset as f32);
-                Ok(())
-            })
+            .map(|_| self.config.set_channel_offset(channel_no, offset as f32))
     }
 
     pub fn channel_enable_bandwidth_limit(
@@ -352,10 +327,7 @@ impl<'a> Hantek2D42<'a> {
                 error,
                 failed_action: "enabling channel bandwidth limit",
             })
-            .and_then(|_| {
-                self.config.channel_enable_bandwidth_limit(channel_no);
-                Ok(())
-            })
+            .map(|_| self.config.channel_enable_bandwidth_limit(channel_no))
     }
 
     pub fn channel_disable_bandwidth_limit(
@@ -379,10 +351,7 @@ impl<'a> Hantek2D42<'a> {
                 error,
                 failed_action: "disabling channel bandwidth limit",
             })
-            .and_then(|_| {
-                self.config.channel_disable_bandwidth_limit(channel_no);
-                Ok(())
-            })
+            .map(|_| self.config.channel_disable_bandwidth_limit(channel_no))
     }
 
     pub fn capture(
@@ -422,8 +391,8 @@ impl<'a> Hantek2D42<'a> {
                     failed_action: "capture write command",
                 }
             })?;
-            let mut buf = &mut buffer[count..(count + length)];
-            let actual_len = self.usb.read(READ_ENDPOINT, &mut buf).map_err(|error| {
+            let buf = &mut buffer[count..(count + length)];
+            let actual_len = self.usb.read(READ_ENDPOINT, buf).map_err(|error| {
                 Hantek2D42Error::HantekUsbError {
                     error,
                     failed_action: "capture read",
@@ -486,11 +455,10 @@ impl<'a> Hantek2D42<'a> {
                 error,
                 failed_action: "setting time scale",
             })
-            .and_then(|_| {
+            .map(|_| {
                 self.config
                     .set_time_offset_adjustment(15.0 * (raw as f32), -15.0 * (raw as f32));
                 self.config.set_time_scale(time_scale);
-                Ok(())
             })
     }
 
@@ -535,10 +503,7 @@ impl<'a> Hantek2D42<'a> {
                 error,
                 failed_action: "setting time offset",
             })
-            .and_then(|_| {
-                self.config.set_time_offset(time_offset as f32);
-                Ok(())
-            })
+            .map(|_| self.config.set_time_offset(time_offset as f32))
     }
 
     pub fn set_trigger_source(&mut self, channel_no: usize) -> Result<(), Hantek2D42Error> {
@@ -564,11 +529,10 @@ impl<'a> Hantek2D42<'a> {
                 error,
                 failed_action: "setting trigger source",
             })
-            .and_then(|_| {
+            .map(|_| {
                 self.config.set_trigger_source_channel_no(channel_no);
                 self.config
                     .set_trigger_level_adjustment(4.0 * scale, -4.0 * scale);
-                Ok(())
             })
     }
 
@@ -591,10 +555,7 @@ impl<'a> Hantek2D42<'a> {
                 error,
                 failed_action: "setting trigger slope",
             })
-            .and_then(|_| {
-                self.config.set_trigger_slope(trigger_slope);
-                Ok(())
-            })
+            .map(|_| self.config.set_trigger_slope(trigger_slope))
     }
 
     pub fn set_trigger_mode(&mut self, trigger_mode: TriggerMode) -> Result<(), Hantek2D42Error> {
@@ -613,10 +574,7 @@ impl<'a> Hantek2D42<'a> {
                 error,
                 failed_action: "setting trigger mode",
             })
-            .and_then(|_| {
-                self.config.set_trigger_mode(trigger_mode);
-                Ok(())
-            })
+            .map(|_| self.config.set_trigger_mode(trigger_mode))
     }
 
     pub fn set_trigger_level_with_auto_adjustment(
@@ -661,10 +619,7 @@ impl<'a> Hantek2D42<'a> {
                 error,
                 failed_action: "setting trigger level",
             })
-            .and_then(|_| {
-                self.config.set_trigger_level(trigger_level as f32);
-                Ok(())
-            })
+            .map(|_| self.config.set_trigger_level(trigger_level as f32))
     }
 
     ///=================================================================== AWG
@@ -690,10 +645,7 @@ impl<'a> Hantek2D42<'a> {
                 error,
                 failed_action: "setting awg mode",
             })
-            .and_then(|_| {
-                self.config.set_awg_type(awg_type);
-                Ok(())
-            })
+            .map(|_| self.config.set_awg_type(awg_type))
     }
 
     pub fn set_awg_frequency(&mut self, frequency: f32) -> Result<(), Hantek2D42Error> {
@@ -710,10 +662,7 @@ impl<'a> Hantek2D42<'a> {
                 error,
                 failed_action: "setting awg frequency",
             })
-            .and_then(|_| {
-                self.config.set_awg_frequency(frequency);
-                Ok(())
-            })
+            .map(|_| self.config.set_awg_frequency(frequency))
     }
 
     pub fn set_awg_amplitude(&mut self, amplitude: f32) -> Result<(), Hantek2D42Error> {
@@ -736,10 +685,7 @@ impl<'a> Hantek2D42<'a> {
                 error,
                 failed_action: "setting awg amplitude",
             })
-            .and_then(|_| {
-                self.config.set_awg_amplitude(amplitude);
-                Ok(())
-            })
+            .map(|_| self.config.set_awg_amplitude(amplitude))
     }
 
     pub fn set_awg_offset(&mut self, offset: f32) -> Result<(), Hantek2D42Error> {
@@ -762,10 +708,7 @@ impl<'a> Hantek2D42<'a> {
                 error,
                 failed_action: "setting awg offset",
             })
-            .and_then(|_| {
-                self.config.set_awg_offset(offset);
-                Ok(())
-            })
+            .map(|_| self.config.set_awg_offset(offset))
     }
 
     pub fn set_awg_duty_square(&mut self, duty: f32) -> Result<(), Hantek2D42Error> {
@@ -783,10 +726,7 @@ impl<'a> Hantek2D42<'a> {
                 error,
                 failed_action: "setting awg square duty",
             })
-            .and_then(|_| {
-                self.config.set_awg_duty_square(duty);
-                Ok(())
-            })
+            .map(|_| self.config.set_awg_duty_square(duty))
     }
 
     pub fn set_awg_duty_ramp(&mut self, duty: f32) -> Result<(), Hantek2D42Error> {
@@ -805,10 +745,7 @@ impl<'a> Hantek2D42<'a> {
                 error,
                 failed_action: "setting awg ramp duty",
             })
-            .and_then(|_| {
-                self.config.set_awg_duty_ramp(duty);
-                Ok(())
-            })
+            .map(|_| self.config.set_awg_duty_ramp(duty))
     }
 
     pub fn set_awg_duty_trap(
@@ -834,10 +771,7 @@ impl<'a> Hantek2D42<'a> {
                 error,
                 failed_action: "setting awg ramp duty",
             })
-            .and_then(|_| {
-                self.config.set_awg_duty_trap(high, low, rise);
-                Ok(())
-            })
+            .map(|_| self.config.set_awg_duty_trap(high, low, rise))
     }
 
     pub fn awg_start(&mut self) -> Result<(), Hantek2D42Error> {
@@ -852,10 +786,7 @@ impl<'a> Hantek2D42<'a> {
                 error,
                 failed_action: "awg start",
             })
-            .and_then(|_| {
-                self.config.awg_start();
-                Ok(())
-            })
+            .map(|_| self.config.awg_start())
     }
 
     pub fn awg_stop(&mut self) -> Result<(), Hantek2D42Error> {
@@ -870,10 +801,7 @@ impl<'a> Hantek2D42<'a> {
                 error,
                 failed_action: "awg stop",
             })
-            .and_then(|_| {
-                self.config.awg_stop();
-                Ok(())
-            })
+            .map(|_| self.config.awg_stop())
     }
 
     ///=============================================================== INTERNAL

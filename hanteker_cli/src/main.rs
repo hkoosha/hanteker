@@ -51,10 +51,10 @@ fn main() -> anyhow::Result<()> {
 
 fn handle_usb_command(cli: &Cli, hantek: &mut Hantek2D42) -> anyhow::Result<()> {
     match &cli.sub_commands {
-        Commands::Awg(sub) => handle_awg(&cli, sub, hantek)?,
-        Commands::Device(sub) => handle_device(&cli, sub, hantek)?,
-        Commands::Scope(sub) => handle_scope(&cli, sub, hantek)?,
-        Commands::Print(_) => handle_print(&cli, hantek)?,
+        Commands::Awg(sub) => handle_awg(cli, sub, hantek)?,
+        Commands::Device(sub) => handle_device(cli, sub, hantek)?,
+        Commands::Scope(sub) => handle_scope(cli, sub, hantek)?,
+        Commands::Print(_) => handle_print(cli, hantek)?,
         _ => unreachable!(),
     }
 
