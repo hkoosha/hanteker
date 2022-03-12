@@ -5,9 +5,10 @@ use anyhow::bail;
 use clap_complete::generate;
 use log::warn;
 
+use hanteker_lib::device::cfg::DeviceFunction;
 use hanteker_lib::models::hantek2d42::Hantek2D42;
 
-use crate::cli::{cli_command, AwgCli, Cli, DeviceCli, ScopeCli, ShellCli};
+use crate::cli::{cli_command, AwgCli, CaptureCli, ChannelCli, Cli, DeviceCli, ScopeCli, ShellCli};
 
 pub(crate) fn handle_shell(_parent: &Cli, s: &ShellCli) {
     let name = match &s.name_override {
@@ -50,60 +51,8 @@ pub(crate) fn handle_scope(
     cli: &ScopeCli,
     hantek: &mut Hantek2D42,
 ) -> anyhow::Result<()> {
-    if cli.enable_channel && cli.disable_channel {
-        bail!("must not specify disable-channel and enable-channel at the same time.");
-    }
-    if cli.enable_bandwidth_limit && cli.disable_bandwidth_limit {
-        bail!(
-            "must not specify disable-bandwidth-limit and enable-bandwidth-limit at the same time."
-        );
-    }
-    if cli.channel.is_empty() {
-        bail!("at least one channel must be specified");
-    }
-
-    if cli.enable_channel {
-        for channel in &cli.channel {
-            hantek.enable_channel(*channel)?;
-        }
-    }
-    if cli.disable_channel {
-        for channel in &cli.channel {
-            hantek.disable_channel(*channel)?;
-        }
-    }
-
-    if cli.enable_bandwidth_limit {
-        for channel in &cli.channel {
-            hantek.channel_enable_bandwidth_limit(*channel)?;
-        }
-    }
-    if cli.disable_bandwidth_limit {
-        for channel in &cli.channel {
-            hantek.channel_disable_bandwidth_limit(*channel)?;
-        }
-    }
-
-    if cli.probe.is_some() {
-        for channel in &cli.channel {
-            hantek.set_channel_probe(*channel, cli.probe.as_ref().unwrap().clone())?;
-        }
-    }
-
-    if cli.scale.is_some() {
-        for channel in &cli.channel {
-            hantek.set_channel_scale(*channel, cli.scale.as_ref().unwrap().clone())?;
-        }
-    }
-
-    if cli.offset.is_some() {
-        for channel in &cli.channel {
-            let result =
-                hantek.set_channel_offset_with_auto_adjustment(*channel, cli.offset.unwrap());
-            if result.is_err() {
-                result?;
-            }
-        }
+    if cli.force_mode {
+        hantek.set_device_function(DeviceFunction::Scope)?;
     }
 
     if cli.time_scale.is_some() {
@@ -126,21 +75,84 @@ pub(crate) fn handle_scope(
         hantek.set_trigger_mode(cli.trigger_mode.as_ref().unwrap().clone())?;
     }
 
-    if cli.capture {
-        let out = std::io::stdout();
-        let mut lock = out.lock();
-        loop {
-            let captured = hantek
-                .capture(&cli.channel, cli.capture_chunk)
-                .expect("capture failed");
-            if lock.write_all(&captured).is_err() || lock.flush().is_err() {
-                // Probably stream closed.
-                std::process::exit(0);
-            }
-        }
+    Ok(())
+}
+
+pub(crate) fn handle_channel(
+    _parent: &Cli,
+    cli: &ChannelCli,
+    hantek: &mut Hantek2D42,
+) -> anyhow::Result<()> {
+    if cli.force_mode {
+        hantek.set_device_function(DeviceFunction::Scope)?;
+    }
+
+    if cli.enable {
+        hantek.enable_channel(cli.channel)?;
+    }
+    if cli.disable {
+        hantek.disable_channel(cli.channel)?;
+    }
+
+    if cli.enable_bandwidth_limit {
+        hantek.channel_enable_bandwidth_limit(cli.channel)?;
+    }
+    if cli.disable_bandwidth_limit {
+        hantek.channel_disable_bandwidth_limit(cli.channel)?;
+    }
+
+    if cli.probe.is_some() {
+        hantek.set_channel_probe(cli.channel, cli.probe.as_ref().unwrap().clone())?;
+    }
+
+    if cli.scale.is_some() {
+        hantek.set_channel_scale(cli.channel, cli.scale.as_ref().unwrap().clone())?;
+    }
+
+    if cli.offset.is_some() {
+        hantek.set_channel_offset_with_auto_adjustment(cli.channel, cli.offset.unwrap())?;
     }
 
     Ok(())
+}
+
+pub(crate) fn handle_capture(
+    _parent: &Cli,
+    cli: &CaptureCli,
+    hantek: &mut Hantek2D42,
+) -> anyhow::Result<()> {
+    if cli.force_mode {
+        hantek.set_device_function(DeviceFunction::Scope)?;
+    }
+
+    let out = std::io::stdout();
+    let mut lock = out.lock();
+
+    match cli.num_captures {
+        None => {
+            loop {
+                let captured = hantek
+                    .capture(&cli.channel, cli.capture_chunk)
+                    .expect("capture failed");
+                if lock.write_all(&captured).is_err() || lock.flush().is_err() {
+                    // Probably stream closed.
+                    std::process::exit(0);
+                }
+            }
+        }
+        Some(num) => {
+            for _ in 0..num {
+                let captured = hantek
+                    .capture(&cli.channel, cli.capture_chunk)
+                    .expect("capture failed");
+                if lock.write_all(&captured).is_err() || lock.flush().is_err() {
+                    // Probably stream closed.
+                    std::process::exit(0);
+                }
+            }
+            Ok(())
+        }
+    }
 }
 
 pub(crate) fn handle_awg(
@@ -148,6 +160,10 @@ pub(crate) fn handle_awg(
     cli: &AwgCli,
     hantek: &mut Hantek2D42,
 ) -> anyhow::Result<()> {
+    if cli.force_mode {
+        hantek.set_device_function(DeviceFunction::AWG)?;
+    }
+
     if (cli.duty_trap_high.is_some() || cli.duty_trap_low.is_some() || cli.duty_trap_rise.is_some())
         && (cli.duty_trap_high.is_none()
             || cli.duty_trap_rise.is_none()

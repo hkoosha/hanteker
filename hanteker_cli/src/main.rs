@@ -4,8 +4,11 @@ use pretty_env_logger::formatted_builder;
 
 use hanteker_lib::models::hantek2d42::Hantek2D42;
 
-use crate::cli::{Cli, cli_parse, Commands};
-use crate::handler::{handle_awg, handle_device, handle_print, handle_scope, handle_shell};
+use crate::cli::{cli_parse, Cli, Commands};
+use crate::handler::{
+    handle_awg, handle_capture, handle_channel, handle_device, handle_print, handle_scope,
+    handle_shell,
+};
 
 mod cli;
 mod handler;
@@ -55,7 +58,9 @@ fn handle_usb_command(cli: &Cli, hantek: &mut Hantek2D42) -> anyhow::Result<()> 
         Commands::Device(sub) => handle_device(cli, sub, hantek)?,
         Commands::Scope(sub) => handle_scope(cli, sub, hantek)?,
         Commands::Print(_) => handle_print(cli, hantek)?,
-        _ => unreachable!(),
+        Commands::Channel(sub) => handle_channel(cli, sub, hantek)?,
+        Commands::Capture(sub) => handle_capture(cli, sub, hantek)?,
+        Commands::Shell(_) => unreachable!(),
     }
 
     Ok(())

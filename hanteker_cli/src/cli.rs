@@ -1,5 +1,6 @@
 use clap::{Args, CommandFactory, Parser, Subcommand};
 use clap_complete::Shell;
+
 use hanteker_lib::device::cfg::{
     AwgType, Coupling, DeviceFunction, Probe, Scale, TimeScale, TriggerMode, TriggerSlope,
 };
@@ -36,6 +37,12 @@ pub(crate) enum Commands {
     /// Operate on a scope function of the device
     Scope(ScopeCli),
 
+    /// Operate on a scope channel
+    Channel(ChannelCli),
+
+    /// Capture scope channels
+    Capture(CaptureCli),
+
     /// Operate on AWG function of the device
     Awg(AwgCli),
 
@@ -60,14 +67,43 @@ pub(crate) struct DeviceCli {
 
 #[derive(Args, Debug)]
 pub(crate) struct ScopeCli {
+    /// Set device to scope mode before running any other command
+    #[clap(short, long)]
+    pub(crate) force_mode: bool,
+
+    #[clap(long, arg_enum)]
+    pub(crate) time_scale: Option<TimeScale>,
+
+    #[clap(long)]
+    pub(crate) time_offset: Option<f32>,
+
+    #[clap(long, value_name = "CHANNEL")]
+    pub(crate) trigger_source: Option<usize>,
+
+    #[clap(long, arg_enum)]
+    pub(crate) trigger_slope: Option<TriggerSlope>,
+
+    #[clap(long, arg_enum)]
+    pub(crate) trigger_mode: Option<TriggerMode>,
+
+    #[clap(long)]
+    pub(crate) trigger_level: Option<f32>,
+}
+
+#[derive(Args, Debug)]
+pub(crate) struct ChannelCli {
+    /// Set device to scope mode before running any other command
+    #[clap(short, long)]
+    pub(crate) force_mode: bool,
+
     #[clap(short, long, possible_values = ["1", "2"])]
-    pub(crate) channel: Vec<usize>,
+    pub(crate) channel: usize,
 
-    #[clap(long)]
-    pub(crate) enable_channel: bool,
+    #[clap(long, group = "channel-status")]
+    pub(crate) enable: bool,
 
-    #[clap(long)]
-    pub(crate) disable_channel: bool,
+    #[clap(long, group = "channel-status")]
+    pub(crate) disable: bool,
 
     #[clap(long, arg_enum)]
     pub(crate) coupling: Option<Coupling>,
@@ -81,37 +117,28 @@ pub(crate) struct ScopeCli {
     #[clap(long)]
     pub(crate) offset: Option<f32>,
 
-    #[clap(long)]
+    #[clap(long, group = "bandwidth-limit-status")]
     pub(crate) enable_bandwidth_limit: bool,
 
-    #[clap(long)]
+    #[clap(long, group = "bandwidth-limit-status")]
     pub(crate) disable_bandwidth_limit: bool,
+}
 
-    #[clap(long, arg_enum)]
-    pub(crate) time_scale: Option<TimeScale>,
+#[derive(Args, Debug)]
+pub(crate) struct CaptureCli {
+    /// Set device to scope mode before running any other command
+    #[clap(short, long)]
+    pub(crate) force_mode: bool,
 
-    #[clap(long)]
-    pub(crate) time_offset: Option<f32>,
-
-    // TODO properly name arg in clap.
-    /// Takes channel no
-    #[clap(long)]
-    pub(crate) trigger_source: Option<usize>,
-
-    #[clap(long, arg_enum)]
-    pub(crate) trigger_slope: Option<TriggerSlope>,
-
-    #[clap(long, arg_enum)]
-    pub(crate) trigger_mode: Option<TriggerMode>,
-
-    #[clap(long)]
-    pub(crate) trigger_level: Option<f32>,
-
-    #[clap(short = 'k', long)]
-    pub(crate) capture: bool,
+    #[clap(short, long, possible_values = ["1", "2"])]
+    pub(crate) channel: Vec<usize>,
 
     #[clap(long, default_value_t = 1000)]
     pub(crate) capture_chunk: usize,
+
+    /// Defaults to infinity
+    #[clap(short, long)]
+    pub(crate) num_captures: Option<usize>,
 }
 
 #[derive(Args, Debug)]
@@ -128,10 +155,14 @@ pub(crate) struct ShellCli {
 
 #[derive(Args, Debug)]
 pub(crate) struct AwgCli {
+    /// Set device to AWG mode before running any other command
+    #[clap(short, long)]
+    pub(crate) force_mode: bool,
+
     #[clap(short, long, arg_enum)]
     pub(crate) r#type: Option<AwgType>,
 
-    #[clap(short, long)]
+    #[clap(long)]
     pub(crate) frequency: Option<f32>,
 
     #[clap(short, long)]
