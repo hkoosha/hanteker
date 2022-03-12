@@ -1,7 +1,7 @@
 [package]
 name = "hanteker_lib"
 description = "Library to interface with Hantek handheld osilloscope (Hantek 2D42 and 2D72)"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 license = "GPL-3.0"
 repository = "https://github.com/hkoosha/hanteker"

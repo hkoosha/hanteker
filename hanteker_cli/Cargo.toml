@@ -1,7 +1,7 @@
 [package]
 name = "hanteker_cli"
 description = "CLI tool to interface with Hantek handheld osilloscope (Hantek 2D42 and 2D72)"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 license = "GPL-3.0"
 repository = "https://github.com/hkoosha/hanteker"
@@ -19,6 +19,4 @@ clap_complete = "3.1"
 libusb = "0.3"
 
 # hanteker_lib = "0.1.0"
-hanteker_lib = { path = "../hanteker_lib", version = "0.1.0" }
-
-
+hanteker_lib = { path = "../hanteker_lib", version = "0.2.0" }
