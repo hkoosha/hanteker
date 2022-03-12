@@ -8,116 +8,6 @@ pub enum Val {
 }
 
 #[derive(Clone)]
-pub struct HantekCommand {
-    idx: u8,
-    boh: u8,
-    func: u16,
-    cmd: u8,
-    val: Val,
-    last: u8,
-}
-
-#[allow(clippy::from_over_into)]
-impl Into<RawCommand> for HantekCommand {
-    fn into(self) -> RawCommand {
-        let mut as_array = [0u8; 10];
-        as_array[0] = self.idx;
-        as_array[1] = self.boh;
-        as_array[2] = self.func.to_be_bytes()[1];
-        as_array[3] = self.func.to_be_bytes()[0];
-        as_array[4] = self.cmd;
-        match self.val {
-            Val::ValU8(v) => {
-                as_array[5] = v[0];
-                as_array[6] = v[1];
-                as_array[7] = v[2];
-                as_array[8] = v[3];
-            }
-            Val::ValU16(v) => {
-                as_array[5] = v[0].to_le_bytes()[0];
-                as_array[6] = v[0].to_le_bytes()[1];
-                as_array[7] = v[1].to_le_bytes()[0];
-                as_array[8] = v[1].to_le_bytes()[1];
-            }
-            Val::ValU32(v) => {
-                as_array[5] = v.to_le_bytes()[0];
-                as_array[6] = v.to_le_bytes()[1];
-                as_array[7] = v.to_le_bytes()[2];
-                as_array[8] = v.to_le_bytes()[3];
-            }
-        }
-        as_array[9] = self.last;
-
-        as_array
-    }
-}
-
-impl HantekCommand {
-    pub fn dump(&self) -> String {
-        let val = match self.val {
-            Val::ValU8(v) => format!("{}-{}-{}-{}", v[0], v[1], v[2], v[3]),
-            Val::ValU16(v) => format!("{}-{}", v[0], v[1]),
-            Val::ValU32(v) => format!("{}", v),
-        };
-
-        format!(
-            "idx={}\nboh={}\nfunc={}\ncmd={}\nval={}\nlast={}",
-            self.idx, self.boh, self.func, self.cmd, val, self.last
-        )
-    }
-
-    pub fn dump_raw(&self) -> String {
-        let cloned = self.clone();
-        let raw: RawCommand = cloned.into();
-        format!(
-            "idx={}\nboh={}\nfunc={}-{}\ncmd={}\nval={}-{}-{}-{}\nlast={}",
-            raw[0], // idx
-            raw[1], // boh
-            raw[2],
-            raw[3], // func
-            raw[4], // cmd
-            raw[5],
-            raw[6],
-            raw[7],
-            raw[8], // val
-            raw[9]  // last
-        )
-    }
-
-    pub fn print_dump(self) -> Self {
-        let val = match self.val {
-            Val::ValU8(v) => format!("{}-{}-{}-{}", v[0], v[1], v[2], v[3]),
-            Val::ValU16(v) => format!("{}-{}", v[0], v[1]),
-            Val::ValU32(v) => format!("{}", v),
-        };
-
-        println!(
-            "idx={}\nboh={}\nfunc={}\ncmd={}\nval={}\nlast={}",
-            self.idx, self.boh, self.func, self.cmd, val, self.last
-        );
-        self
-    }
-
-    pub fn print_dump_raw(self) -> Self {
-        let cloned = self.clone();
-        let raw: RawCommand = cloned.into();
-        println!(
-            "idx={}\nboh={}\nfunc={}-{}\ncmd={}\nval={}-{}-{}-{}\nlast={}",
-            raw[0], // idx
-            raw[1], // boh
-            raw[2],
-            raw[3], // func
-            raw[4], // cmd
-            raw[5],
-            raw[6],
-            raw[7],
-            raw[8], // val
-            raw[9]  // last
-        );
-        self
-    }
-}
-
 pub struct HantekCommandBuilder {
     idx: Option<u8>,
     boh: Option<u8>,
@@ -183,20 +73,108 @@ impl HantekCommandBuilder {
         self
     }
 
-    pub fn build(self) -> HantekCommand {
-        HantekCommand {
-            idx: self.idx.expect("idx not set"),
-            boh: self.boh.expect("boh not set"),
-            func: self.func.expect("func not set"),
-            cmd: self.cmd.expect("cmd not set"),
-            val: self.val.expect("val not set"),
-            last: self.last.expect("last not set"),
-        }
+    // =================================================================== DEBUG
+
+    pub fn dump(&self) -> String {
+        let idx = match self.idx {
+            Some(v) => v.to_string(),
+            None => "?".to_string(),
+        };
+        let boh = match self.boh {
+            Some(v) => v.to_string(),
+            None => "?".to_string(),
+        };
+        let func = match self.func {
+            Some(v) => v.to_string(),
+            None => "?".to_string(),
+        };
+        let cmd = match self.cmd {
+            Some(v) => v.to_string(),
+            None => "?".to_string(),
+        };
+        let val = match self.val {
+            Some(Val::ValU8(v)) => format!("{}-{}-{}-{}", v[0], v[1], v[2], v[3]),
+            Some(Val::ValU16(v)) => format!("{}-{}", v[0], v[1]),
+            Some(Val::ValU32(v)) => format!("{}", v),
+            None => "?".to_string(),
+        };
+        let last = match self.last {
+            Some(v) => v.to_string(),
+            None => "?".to_string(),
+        };
+
+        format!(
+            "idx={}\nboh={}\nfunc={}\ncmd={}\nval={}\nlast={}",
+            idx, boh, func, cmd, val, last
+        )
+    }
+
+    pub fn dump_raw(&self) -> String {
+        let cloned = self.clone();
+        let raw: RawCommand = cloned.into();
+        format!(
+            "idx={}\nboh={}\nfunc={}-{}\ncmd={}\nval={}-{}-{}-{}\nlast={}",
+            raw[0], // idx
+            raw[1], // boh
+            raw[2], // func0
+            raw[3], // func1
+            raw[4], // cmd
+            raw[5], // val0
+            raw[6], // val1
+            raw[7], // val2
+            raw[8], // val3
+            raw[9]  // last
+        )
+    }
+
+    pub fn print_dump(self) -> Self {
+        println!("{}", self.dump());
+        self
+    }
+
+    pub fn print_dump_raw(self) -> Self {
+        println!("{}", self.dump_raw());
+        self
     }
 }
 
 impl Default for HantekCommandBuilder {
     fn default() -> Self {
         Self::new()
+    }
+}
+
+#[allow(clippy::from_over_into)]
+impl Into<RawCommand> for HantekCommandBuilder {
+    fn into(self) -> RawCommand {
+        let mut as_array = [0u8; 10];
+        as_array[0] = self.idx.expect("idx not set");
+        as_array[1] = self.boh.expect("boh not set");
+        as_array[2] = self.func.expect("func not set").to_be_bytes()[1];
+        as_array[3] = self.func.expect("func not set").to_be_bytes()[0];
+        as_array[4] = self.cmd.expect("cmd not set");
+        match self.val.expect("val not set") {
+            Val::ValU8(v) => {
+                as_array[5] = v[0];
+                as_array[6] = v[1];
+                as_array[7] = v[2];
+                as_array[8] = v[3];
+            }
+            Val::ValU16(v) => {
+                as_array[5] = v[0].to_le_bytes()[0];
+                as_array[6] = v[0].to_le_bytes()[1];
+                as_array[7] = v[1].to_le_bytes()[0];
+                as_array[8] = v[1].to_le_bytes()[1];
+            }
+            Val::ValU32(v) => {
+                as_array[5] = v.to_le_bytes()[0];
+                as_array[6] = v.to_le_bytes()[1];
+                as_array[7] = v.to_le_bytes()[2];
+                as_array[8] = v.to_le_bytes()[3];
+            }
+        }
+        as_array[9] = self.last.expect("last not set");
+
+        as_array
     }
 }

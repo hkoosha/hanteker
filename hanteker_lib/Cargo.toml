@@ -8,11 +8,9 @@ repository = "https://github.com/hkoosha/hanteker"
 
 [dependencies]
 log = "0.4"
-anyhow = "1.0"
+thiserror = "1.0"
 strum = "0.24"
 strum_macros = "0.24"
-
 clap = { version = "3.1", features = ["derive"] }
 
 libusb = "0.3"
-

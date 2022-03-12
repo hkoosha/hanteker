@@ -4,35 +4,21 @@ use std::time::Duration;
 use clap::ArgEnum;
 use strum_macros::{Display, EnumString};
 
-// From GTK Adjustment.
 #[derive(Debug)]
 pub struct Adjustment {
     pub upper: f32,
     pub lower: f32,
-    pub step: f32,
-    pub page: f32,
 }
 
 impl Adjustment {
-    pub fn new(upper: f32, lower: f32, step: f32, page: f32) -> Self {
+    pub fn new(upper: f32, lower: f32) -> Self {
         if upper <= lower {
             panic!(
                 "upper is less than or equal to lower, upper={} lower={}",
                 upper, lower
             );
         }
-        if step == 0.0 {
-            panic!("step is zero");
-        }
-        if page == 0.0 {
-            panic!("page is zero");
-        }
-        Self {
-            upper,
-            lower,
-            step,
-            page,
-        }
+        Self { upper, lower }
     }
 
     pub fn are_limits_sane(&self) -> bool {
@@ -403,17 +389,9 @@ impl HantekConfig {
         self.channel_offset[my_channel_no]
     }
 
-    pub fn set_channel_adjustment(
-        &mut self,
-        channel_no: usize,
-        upper: f32,
-        lower: f32,
-        step: f32,
-        page: f32,
-    ) {
+    pub fn set_channel_adjustment(&mut self, channel_no: usize, upper: f32, lower: f32) {
         let my_channel_no = self.get_internal_channel_no(channel_no);
-        self.channel_offset_adjustment[my_channel_no] =
-            Some(Adjustment::new(upper, lower, step, page));
+        self.channel_offset_adjustment[my_channel_no] = Some(Adjustment::new(upper, lower));
     }
 
     pub fn get_channel_adjustment(&mut self, channel_no: usize) -> Option<&Adjustment> {
@@ -443,8 +421,8 @@ impl HantekConfig {
         self.time_offset_adjustment.as_ref()
     }
 
-    pub fn set_time_offset_adjustment(&mut self, upper: f32, lower: f32, step: f32, page: f32) {
-        self.time_offset_adjustment = Some(Adjustment::new(upper, lower, step, page));
+    pub fn set_time_offset_adjustment(&mut self, upper: f32, lower: f32) {
+        self.time_offset_adjustment = Some(Adjustment::new(upper, lower));
     }
 
     pub fn set_trigger_source_channel_no(&mut self, channel_no: usize) {
@@ -480,8 +458,8 @@ impl HantekConfig {
         self.trigger_level.as_ref()
     }
 
-    pub fn set_trigger_level_adjustment(&mut self, upper: f32, lower: f32, step: f32, page: f32) {
-        self.trigger_level_adjustment = Some(Adjustment::new(upper, lower, step, page));
+    pub fn set_trigger_level_adjustment(&mut self, upper: f32, lower: f32) {
+        self.trigger_level_adjustment = Some(Adjustment::new(upper, lower));
     }
 
     pub fn get_trigger_level_adjustment(&self) -> Option<&Adjustment> {

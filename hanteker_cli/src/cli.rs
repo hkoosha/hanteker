@@ -1,5 +1,3 @@
-use std::str::FromStr;
-
 use clap::{Args, CommandFactory, Parser, Subcommand};
 use clap_complete::Shell;
 use hanteker_lib::device::cfg::{
@@ -62,7 +60,7 @@ pub(crate) struct DeviceCli {
 
 #[derive(Args, Debug)]
 pub(crate) struct ScopeCli {
-    #[clap(short, long, validator = channel_no_validator)]
+    #[clap(short, long, possible_values = ["1", "2"])]
     pub(crate) channel: Vec<usize>,
 
     #[clap(long)]
@@ -170,19 +168,4 @@ pub(crate) fn cli_command() -> clap::Command<'static> {
 
 pub(crate) fn cli_parse() -> Cli {
     Cli::parse()
-}
-
-fn channel_no_validator(s: &str) -> Result<(), String> {
-    let channel = usize::from_str(s);
-    if channel.is_err() {
-        return Err(format!(
-            "Invalid value for channel, expecting 1 or 2, got: {}",
-            s
-        ));
-    }
-    let channel = channel.unwrap();
-    if channel != 1 && channel != 2 {
-        return Err(format!("Invalid channel, expecting 1 or 2, got: {}", s));
-    }
-    Ok(())
 }

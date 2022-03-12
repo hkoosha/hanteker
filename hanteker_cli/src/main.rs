@@ -1,10 +1,10 @@
 use std::time::Duration;
-use anyhow::bail;
 
-use hanteker_lib::models::hantek2d42::Hantek2D42;
 use pretty_env_logger::formatted_builder;
 
-use crate::cli::{cli_parse, Commands};
+use hanteker_lib::models::hantek2d42::Hantek2D42;
+
+use crate::cli::{Cli, cli_parse, Commands};
 use crate::handler::{handle_awg, handle_device, handle_print, handle_scope, handle_shell};
 
 mod cli;
@@ -27,7 +27,7 @@ fn init_log(silent: usize, verbose: usize) {
         builder.parse_filters("INFO");
     }
 
-    builder.try_init().unwrap();
+    builder.init();
 }
 
 fn main() -> anyhow::Result<()> {
@@ -40,13 +40,22 @@ fn main() -> anyhow::Result<()> {
     } else {
         let context = libusb::Context::new()?;
         let mut hantek = Hantek2D42::open(&context, Duration::from_millis(cli.timeout))?;
-        match &cli.sub_commands {
-            Commands::Awg(sub) => handle_awg(&cli, sub, &mut hantek)?,
-            Commands::Device(sub) => handle_device(&cli, sub, &mut hantek)?,
-            Commands::Scope(sub) => handle_scope(&cli, sub, &mut hantek)?,
-            Commands::Print(_) => handle_print(&cli, &mut hantek)?,
-            _ => unreachable!(),
-        }
+        let cmd_result = handle_usb_command(&cli, &mut hantek);
+        let release_result = hantek.usb.release();
+        cmd_result?;
+        release_result?;
+    }
+
+    Ok(())
+}
+
+fn handle_usb_command(cli: &Cli, hantek: &mut Hantek2D42) -> anyhow::Result<()> {
+    match &cli.sub_commands {
+        Commands::Awg(sub) => handle_awg(&cli, sub, hantek)?,
+        Commands::Device(sub) => handle_device(&cli, sub, hantek)?,
+        Commands::Scope(sub) => handle_scope(&cli, sub, hantek)?,
+        Commands::Print(_) => handle_print(&cli, hantek)?,
+        _ => unreachable!(),
     }
 
     Ok(())

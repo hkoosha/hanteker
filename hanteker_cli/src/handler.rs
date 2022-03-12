@@ -1,10 +1,13 @@
+use std::io::Write;
 use std::{env, io};
 
-use crate::cli::{cli_command, AwgCli, Cli, DeviceCli, ScopeCli, ShellCli};
 use anyhow::bail;
 use clap_complete::generate;
-use hanteker_lib::models::hantek2d42::Hantek2D42;
 use log::warn;
+
+use hanteker_lib::models::hantek2d42::Hantek2D42;
+
+use crate::cli::{cli_command, AwgCli, Cli, DeviceCli, ScopeCli, ShellCli};
 
 pub(crate) fn handle_shell(_parent: &Cli, s: &ShellCli) {
     let name = match &s.name_override {
@@ -95,7 +98,11 @@ pub(crate) fn handle_scope(
 
     if cli.offset.is_some() {
         for channel in &cli.channel {
-            hantek.set_channel_offset_with_auto_adjustment(*channel, cli.offset.unwrap())?;
+            let result =
+                hantek.set_channel_offset_with_auto_adjustment(*channel, cli.offset.unwrap());
+            if result.is_err() {
+                result?;
+            }
         }
     }
 
@@ -121,8 +128,16 @@ pub(crate) fn handle_scope(
 
     if cli.capture {
         let out = std::io::stdout();
-        let lock = out.lock();
-        hantek.capture_inf(&cli.channel, cli.capture_chunk, lock);
+        let mut lock = out.lock();
+        loop {
+            let captured = hantek
+                .capture(&cli.channel, cli.capture_chunk)
+                .expect("capture failed");
+            if lock.write_all(&captured).is_err() || lock.flush().is_err() {
+                // Probably stream closed.
+                std::process::exit(0);
+            }
+        }
     }
 
     Ok(())

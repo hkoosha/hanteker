@@ -764,12 +764,12 @@ dependencies = [
 name = "hanteker_lib"
 version = "0.1.0"
 dependencies = [
- "anyhow",
  "clap",
  "libusb",
  "log",
  "strum 0.24.0",
  "strum_macros 0.24.0",
+ "thiserror",
 ]
 
 [[package]]
