@@ -1,13 +1,13 @@
 pub type RawCommand = [u8; 10];
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub enum Val {
     ValU8([u8; 4]),
     ValU16([u16; 2]),
     ValU32(u32),
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct HantekCommandBuilder {
     idx: Option<u8>,
     boh: Option<u8>,

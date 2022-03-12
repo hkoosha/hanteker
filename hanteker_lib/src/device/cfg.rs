@@ -228,12 +228,14 @@ impl AwgType {
     }
 }
 
+#[derive(Debug)]
 pub struct TrapDuty {
     pub high: f32,
     pub low: f32,
     pub rise: f32,
 }
 
+#[derive(Debug)]
 pub struct HantekConfig {
     timeout: Duration,
 
