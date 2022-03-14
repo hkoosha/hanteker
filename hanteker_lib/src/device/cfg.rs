@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 /// TODO not all types need to be float, some should actually be u32, e.g. AWG Amplitude.
 use std::time::Duration;
 
@@ -241,13 +242,13 @@ pub struct HantekConfig {
 
     pub device_function: Option<DeviceFunction>,
 
-    pub enabled_channels: Vec<Option<bool>>,
-    pub channel_coupling: Vec<Option<Coupling>>,
-    pub channel_probe: Vec<Option<Probe>>,
-    pub channel_scale: Vec<Option<Scale>>,
-    pub channel_offset: Vec<Option<f32>>,
-    pub channel_bandwidth_limit: Vec<Option<bool>>,
-    pub channel_offset_adjustment: Vec<Option<Adjustment>>,
+    pub enabled_channels: HashMap<usize, Option<bool>>,
+    pub channel_coupling: HashMap<usize, Option<Coupling>>,
+    pub channel_probe: HashMap<usize, Option<Probe>>,
+    pub channel_scale: HashMap<usize, Option<Scale>>,
+    pub channel_offset: HashMap<usize, Option<f32>>,
+    pub channel_bandwidth_limit: HashMap<usize, Option<bool>>,
+    pub channel_offset_adjustment: HashMap<usize, Option<Adjustment>>,
 
     pub time_scale: Option<TimeScale>,
     pub time_offset: Option<f32>,
@@ -277,13 +278,13 @@ impl HantekConfig {
 
             device_function: None,
 
-            enabled_channels: (0..num_channels).map(|_| None).collect(),
-            channel_coupling: (0..num_channels).map(|_| None).collect(),
-            channel_probe: (0..num_channels).map(|_| None).collect(),
-            channel_scale: (0..num_channels).map(|_| None).collect(),
-            channel_offset: (0..num_channels).map(|_| None).collect(),
-            channel_bandwidth_limit: (0..num_channels).map(|_| None).collect(),
-            channel_offset_adjustment: (0..num_channels).map(|_| None).collect(),
+            enabled_channels: (1..=num_channels).map(|idx| (idx, None)).collect(),
+            channel_coupling: (1..=num_channels).map(|idx| (idx, None)).collect(),
+            channel_probe: (1..=num_channels).map(|idx| (idx, None)).collect(),
+            channel_scale: (1..=num_channels).map(|idx| (idx, None)).collect(),
+            channel_offset: (1..=num_channels).map(|idx| (idx, None)).collect(),
+            channel_bandwidth_limit: (1..=num_channels).map(|idx| (idx, None)).collect(),
+            channel_offset_adjustment: (1..=num_channels).map(|idx| (idx, None)).collect(),
 
             time_scale: None,
             time_offset: None,
@@ -305,262 +306,5 @@ impl HantekConfig {
             awg_duty_trap: None,
             awg_running_status: None,
         }
-    }
-
-    pub fn get_timeout(&self) -> Duration {
-        self.timeout
-    }
-
-    pub fn set_device_function(&mut self, function: DeviceFunction) {
-        self.device_function = Some(function);
-    }
-
-    pub fn get_device_function(&self) -> Option<&DeviceFunction> {
-        self.device_function.as_ref()
-    }
-
-    /// ============================================================ CHANNEL
-
-    pub fn enable_channel(&mut self, channel_no: usize) {
-        let my_channel_no = self.get_internal_channel_no(channel_no);
-        self.enabled_channels[my_channel_no] = Some(true);
-    }
-
-    pub fn disable_channel(&mut self, channel_no: usize) {
-        let my_channel_no = self.get_internal_channel_no(channel_no);
-        self.enabled_channels[my_channel_no] = Some(false);
-    }
-
-    pub fn get_channel_enable_status(&self, channel_no: usize) -> Option<&bool> {
-        let my_channel_no = self.get_internal_channel_no(channel_no);
-        self.enabled_channels[my_channel_no].as_ref()
-    }
-
-    pub fn channel_disable_bandwidth_limit(&mut self, channel_no: usize) {
-        let my_channel_no = self.get_internal_channel_no(channel_no);
-        self.channel_bandwidth_limit[my_channel_no] = Some(true);
-    }
-
-    pub fn channel_enable_bandwidth_limit(&mut self, channel_no: usize) {
-        let my_channel_no = self.get_internal_channel_no(channel_no);
-        self.channel_bandwidth_limit[my_channel_no] = Some(false);
-    }
-
-    pub fn get_channel_bandwidth_limit_status(&self, channel_no: usize) -> Option<&bool> {
-        let my_channel_no = self.get_internal_channel_no(channel_no);
-        self.channel_bandwidth_limit[my_channel_no].as_ref()
-    }
-
-    pub fn set_channel_coupling(&mut self, channel_no: usize, coupling: Coupling) {
-        let my_channel_no = self.get_internal_channel_no(channel_no);
-        self.channel_coupling[my_channel_no] = Some(coupling);
-    }
-
-    pub fn get_channel_coupling(&self, channel_no: usize) -> Option<&Coupling> {
-        let my_channel_no = self.get_internal_channel_no(channel_no);
-        self.channel_coupling[my_channel_no].as_ref()
-    }
-
-    pub fn set_channel_probe(&mut self, channel_no: usize, probe: Probe) {
-        let my_channel_no = self.get_internal_channel_no(channel_no);
-        self.channel_probe[my_channel_no] = Some(probe);
-    }
-
-    pub fn get_channel_probe(&self, channel_no: usize) -> Option<&Probe> {
-        let my_channel_no = self.get_internal_channel_no(channel_no);
-        self.channel_probe[my_channel_no].as_ref()
-    }
-
-    pub fn set_channel_scale(&mut self, channel_no: usize, scale: Scale) {
-        let my_channel_no = self.get_internal_channel_no(channel_no);
-        self.channel_scale[my_channel_no] = Some(scale);
-    }
-
-    pub fn get_channel_scale(&self, channel_no: usize) -> Option<&Scale> {
-        let my_channel_no = self.get_internal_channel_no(channel_no);
-        self.channel_scale[my_channel_no].as_ref()
-    }
-
-    pub fn set_channel_offset(&mut self, channel_no: usize, offset: f32) {
-        let my_channel_no = self.get_internal_channel_no(channel_no);
-        self.channel_offset[my_channel_no] = Some(offset);
-    }
-
-    pub fn get_channel_offset(&self, channel_no: usize) -> Option<f32> {
-        let my_channel_no = self.get_internal_channel_no(channel_no);
-        self.channel_offset[my_channel_no]
-    }
-
-    pub fn set_channel_adjustment(&mut self, channel_no: usize, upper: f32, lower: f32) {
-        let my_channel_no = self.get_internal_channel_no(channel_no);
-        self.channel_offset_adjustment[my_channel_no] = Some(Adjustment::new(upper, lower));
-    }
-
-    pub fn get_channel_adjustment(&mut self, channel_no: usize) -> Option<&Adjustment> {
-        let my_channel_no = self.get_internal_channel_no(channel_no);
-        self.channel_offset_adjustment[my_channel_no].as_ref()
-    }
-
-    /// ================================================================== SCOPE
-
-    pub fn set_time_scale(&mut self, time_scale: TimeScale) {
-        self.time_scale = Some(time_scale);
-    }
-
-    pub fn get_timescale(&self) -> Option<&TimeScale> {
-        self.time_scale.as_ref()
-    }
-
-    pub fn set_time_offset(&mut self, time_offset: f32) {
-        self.time_offset = Some(time_offset);
-    }
-
-    pub fn get_time_offset(&self) -> Option<&f32> {
-        self.time_offset.as_ref()
-    }
-
-    pub fn get_time_offset_adjustment(&self) -> Option<&Adjustment> {
-        self.time_offset_adjustment.as_ref()
-    }
-
-    pub fn set_time_offset_adjustment(&mut self, upper: f32, lower: f32) {
-        self.time_offset_adjustment = Some(Adjustment::new(upper, lower));
-    }
-
-    pub fn set_trigger_source_channel_no(&mut self, channel_no: usize) {
-        self.get_internal_channel_no(channel_no);
-        self.trigger_source_channel = Some(channel_no);
-    }
-
-    pub fn get_trigger_source_channel_no(&self) -> Option<&usize> {
-        self.trigger_source_channel.as_ref()
-    }
-
-    pub fn set_trigger_slope(&mut self, trigger_slope: TriggerSlope) {
-        self.trigger_slope = Some(trigger_slope);
-    }
-
-    pub fn get_trigger_slope(&self) -> Option<&TriggerSlope> {
-        self.trigger_slope.as_ref()
-    }
-
-    pub fn set_trigger_mode(&mut self, trigger_mode: TriggerMode) {
-        self.trigger_mode = Some(trigger_mode);
-    }
-
-    pub fn get_trigger_mode(&self) -> Option<&TriggerMode> {
-        self.trigger_mode.as_ref()
-    }
-
-    pub fn set_trigger_level(&mut self, trigger_level: f32) {
-        self.trigger_level = Some(trigger_level);
-    }
-
-    pub fn get_trigger_level(&self) -> Option<&f32> {
-        self.trigger_level.as_ref()
-    }
-
-    pub fn set_trigger_level_adjustment(&mut self, upper: f32, lower: f32) {
-        self.trigger_level_adjustment = Some(Adjustment::new(upper, lower));
-    }
-
-    pub fn get_trigger_level_adjustment(&self) -> Option<&Adjustment> {
-        self.trigger_level_adjustment.as_ref()
-    }
-
-    pub fn start(&mut self) {
-        self.running_status = Some(RunningStatus::Start);
-    }
-
-    pub fn stop(&mut self) {
-        self.running_status = Some(RunningStatus::Stop);
-    }
-
-    pub fn get_running_status(&self) -> Option<&RunningStatus> {
-        self.running_status.as_ref()
-    }
-
-    /// ==================================================================== AWG
-
-    pub fn get_awg_type(&self) -> Option<&AwgType> {
-        self.awg_type.as_ref()
-    }
-
-    pub fn set_awg_type(&mut self, awg_type: AwgType) {
-        self.awg_type = Some(awg_type);
-    }
-
-    pub fn get_awg_frequency(&self) -> Option<&f32> {
-        self.awg_frequency.as_ref()
-    }
-
-    pub fn set_awg_frequency(&mut self, frequency: f32) {
-        self.awg_frequency = Some(frequency);
-    }
-
-    pub fn get_awg_amplitude(&self) -> Option<&f32> {
-        self.awg_amplitude.as_ref()
-    }
-
-    pub fn set_awg_amplitude(&mut self, amplitude: f32) {
-        self.awg_amplitude = Some(amplitude);
-    }
-
-    pub fn get_awg_offset(&self) -> Option<&f32> {
-        self.awg_offset.as_ref()
-    }
-
-    pub fn set_awg_offset(&mut self, offset: f32) {
-        self.awg_offset = Some(offset);
-    }
-
-    pub fn set_awg_duty_square(&mut self, duty: f32) {
-        self.awg_duty_square = Some(duty);
-    }
-
-    pub fn get_awg_duty_square(&self) -> Option<&f32> {
-        self.awg_duty_square.as_ref()
-    }
-
-    pub fn set_awg_duty_ramp(&mut self, duty: f32) {
-        self.awg_duty_ramp = Some(duty);
-    }
-
-    pub fn get_awg_duty_ramp(&self) -> Option<&f32> {
-        self.awg_duty_ramp.as_ref()
-    }
-
-    pub fn set_awg_duty_trap(&mut self, high: f32, low: f32, rise: f32) {
-        self.awg_duty_trap = Some(TrapDuty { high, low, rise });
-    }
-
-    pub fn get_awg_duty_trap(&self) -> Option<&TrapDuty> {
-        self.awg_duty_trap.as_ref()
-    }
-
-    pub fn awg_start(&mut self) {
-        self.awg_running_status = Some(RunningStatus::Start);
-    }
-
-    pub fn awg_stop(&mut self) {
-        self.awg_running_status = Some(RunningStatus::Stop);
-    }
-
-    pub fn get_awg_running_status(&self) -> Option<&RunningStatus> {
-        self.awg_running_status.as_ref()
-    }
-
-    /// =============================================================== INTERNAL
-
-    fn get_internal_channel_no(&self, channel_no: usize) -> usize {
-        let my_channel_no = channel_no - 1;
-        if my_channel_no >= self.enabled_channels.len() {
-            panic!(
-                "channel no out of range, available_channels=1..{} given_channel={}",
-                self.enabled_channels.len(),
-                channel_no
-            );
-        }
-        my_channel_no
     }
 }
