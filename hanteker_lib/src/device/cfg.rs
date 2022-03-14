@@ -272,9 +272,9 @@ pub struct HantekConfig {
 }
 
 impl HantekConfig {
-    pub fn new(timeout: Option<Duration>, num_channels: usize) -> Self {
+    pub fn new(num_channels: usize) -> Self {
         Self {
-            timeout,
+            timeout: None,
 
             device_function: None,
 
