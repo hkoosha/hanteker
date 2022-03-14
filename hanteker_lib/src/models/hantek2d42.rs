@@ -52,7 +52,7 @@ impl<'a> Hantek2D42<'a> {
                 error,
                 failed_action: "device open",
             })?;
-        let config = HantekConfig::new(timeout, NUM_CHANNELS);
+        let config = HantekConfig::new(Some(timeout), NUM_CHANNELS);
         Ok(Self::new(usb, config))
     }
 

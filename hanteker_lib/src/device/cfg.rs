@@ -238,7 +238,7 @@ pub struct TrapDuty {
 
 #[derive(Debug, Clone)]
 pub struct HantekConfig {
-    pub timeout: Duration,
+    pub timeout: Option<Duration>,
 
     pub device_function: Option<DeviceFunction>,
 
@@ -272,7 +272,7 @@ pub struct HantekConfig {
 }
 
 impl HantekConfig {
-    pub fn new(timeout: Duration, num_channels: usize) -> Self {
+    pub fn new(timeout: Option<Duration>, num_channels: usize) -> Self {
         Self {
             timeout,
 
