@@ -5,7 +5,7 @@ use std::time::Duration;
 use clap::ArgEnum;
 use strum_macros::{Display, EnumString};
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Adjustment {
     pub upper: f32,
     pub lower: f32,
@@ -229,14 +229,14 @@ impl AwgType {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct TrapDuty {
     pub high: f32,
     pub low: f32,
     pub rise: f32,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct HantekConfig {
     pub timeout: Duration,
 
