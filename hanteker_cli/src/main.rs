@@ -1,3 +1,5 @@
+#![cfg_attr(not(debug_assertions), deny(warnings))]
+
 use std::time::Duration;
 
 use pretty_env_logger::formatted_builder;
