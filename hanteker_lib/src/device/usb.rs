@@ -51,6 +51,12 @@ pub enum HantekUsbError {
         vid: u16,
         instances: usize,
     },
+
+    #[error("an interface is already claimed, interface_no={interface}")]
+    InterfaceAlreadyClaimed { interface: u8 },
+
+    #[error("no interface is claimed yet for the requested operation")]
+    NoInterfaceClaimed,
 }
 
 pub struct HantekUsbDevice<'a> {
@@ -137,18 +143,15 @@ impl<'a> HantekUsbDevice<'a> {
     ) -> Result<(Device, DeviceDescriptor), HantekUsbError> {
         let mut devices = Self::find_devices(context, (vid, pid))?;
 
-        if devices.is_empty() {
-            return Err(HantekUsbError::NoDeviceFound { vid, pid });
-        }
-        if devices.len() > 1 {
-            return Err(HantekUsbError::TooManyDevicesFound {
+        match devices.len() {
+            0 => Err(HantekUsbError::NoDeviceFound { vid, pid }),
+            1 => Ok(devices.pop().unwrap()),
+            _ => Err(HantekUsbError::TooManyDevicesFound {
                 vid,
                 pid,
                 instances: devices.len(),
-            });
+            }),
         }
-
-        Ok(devices.pop().unwrap())
     }
 
     fn get_device_language(
@@ -192,6 +195,10 @@ impl<'a> HantekUsbDevice<'a> {
     }
 
     pub fn claim(&mut self) -> Result<(), HantekUsbError> {
+        if let Some(already_claimed) = self.claimed_interface {
+            return Err(HantekUsbError::InterfaceAlreadyClaimed { interface: already_claimed });
+        }
+
         let mut errors = vec![];
         for interface in self.config.interfaces() {
             let try_claim = self.handle.claim_interface(interface.number());
@@ -217,12 +224,20 @@ impl<'a> HantekUsbDevice<'a> {
     }
 
     pub fn write(&mut self, endpoint: u8, buf: &[u8]) -> Result<usize, HantekUsbError> {
+        if let None = self.claimed_interface {
+            return Err(HantekUsbError::NoInterfaceClaimed);
+        }
+
         self.handle
             .write_bulk(endpoint, buf, self.timeout)
             .map_err(|error| HantekUsbError::WriteError { error })
     }
 
     pub fn read(&mut self, endpoint: u8, buf: &mut [u8]) -> Result<usize, HantekUsbError> {
+        if let None = self.claimed_interface {
+            return Err(HantekUsbError::NoInterfaceClaimed);
+        }
+
         self.handle
             .read_bulk(endpoint, buf, self.timeout)
             .map_err(|error| HantekUsbError::ReadError { error })
