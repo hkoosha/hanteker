@@ -237,37 +237,37 @@ pub struct TrapDuty {
 
 #[derive(Debug)]
 pub struct HantekConfig {
-    timeout: Duration,
+    pub timeout: Duration,
 
-    device_function: Option<DeviceFunction>,
+    pub device_function: Option<DeviceFunction>,
 
-    enabled_channels: Vec<Option<bool>>,
-    channel_coupling: Vec<Option<Coupling>>,
-    channel_probe: Vec<Option<Probe>>,
-    channel_scale: Vec<Option<Scale>>,
-    channel_offset: Vec<Option<f32>>,
-    channel_bandwidth_limit: Vec<Option<bool>>,
-    channel_offset_adjustment: Vec<Option<Adjustment>>,
+    pub enabled_channels: Vec<Option<bool>>,
+    pub channel_coupling: Vec<Option<Coupling>>,
+    pub channel_probe: Vec<Option<Probe>>,
+    pub channel_scale: Vec<Option<Scale>>,
+    pub channel_offset: Vec<Option<f32>>,
+    pub channel_bandwidth_limit: Vec<Option<bool>>,
+    pub channel_offset_adjustment: Vec<Option<Adjustment>>,
 
-    time_scale: Option<TimeScale>,
-    time_offset: Option<f32>,
-    time_offset_adjustment: Option<Adjustment>,
+    pub time_scale: Option<TimeScale>,
+    pub time_offset: Option<f32>,
+    pub time_offset_adjustment: Option<Adjustment>,
 
-    running_status: Option<RunningStatus>,
-    trigger_source_channel: Option<usize>,
-    trigger_slope: Option<TriggerSlope>,
-    trigger_mode: Option<TriggerMode>,
-    trigger_level_adjustment: Option<Adjustment>,
-    trigger_level: Option<f32>,
+    pub running_status: Option<RunningStatus>,
+    pub trigger_source_channel: Option<usize>,
+    pub trigger_slope: Option<TriggerSlope>,
+    pub trigger_mode: Option<TriggerMode>,
+    pub trigger_level_adjustment: Option<Adjustment>,
+    pub trigger_level: Option<f32>,
 
-    awg_type: Option<AwgType>,
-    awg_frequency: Option<f32>,
-    awg_amplitude: Option<f32>,
-    awg_offset: Option<f32>,
-    awg_duty_square: Option<f32>,
-    awg_duty_ramp: Option<f32>,
-    awg_duty_trap: Option<TrapDuty>,
-    awg_running_status: Option<RunningStatus>,
+    pub awg_type: Option<AwgType>,
+    pub awg_frequency: Option<f32>,
+    pub awg_amplitude: Option<f32>,
+    pub awg_offset: Option<f32>,
+    pub awg_duty_square: Option<f32>,
+    pub awg_duty_ramp: Option<f32>,
+    pub awg_duty_trap: Option<TrapDuty>,
+    pub awg_running_status: Option<RunningStatus>,
 }
 
 impl HantekConfig {

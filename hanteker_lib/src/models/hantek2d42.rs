@@ -42,15 +42,27 @@ pub struct Hantek2D42<'a> {
 }
 
 impl<'a> Hantek2D42<'a> {
+    pub fn new(usb: HantekUsbDevice<'a>, config: HantekConfig) -> Self {
+        Self {
+            usb,
+            config,
+        }
+    }
+
     pub fn open(context: &'a Context, timeout: Duration) -> Result<Self, Hantek2D42Error> {
-        Ok(Self {
-            usb: HantekUsbDevice::open(context, timeout, (VENDOR_ID__2D42, PRODUCT_ID__2D42))
-                .map_err(|error| Hantek2D42Error::HantekUsbError {
-                    error,
-                    failed_action: "device open",
-                })?,
-            config: HantekConfig::new(timeout, NUM_CHANNELS),
-        })
+        let usb = HantekUsbDevice::open(context, timeout, (VENDOR_ID__2D42, PRODUCT_ID__2D42))
+            .map_err(|error| Hantek2D42Error::HantekUsbError {
+                error,
+                failed_action: "device open",
+            })?;
+        let config = HantekConfig::new(timeout, NUM_CHANNELS);
+        Ok(Self::new(usb, config))
+    }
+
+    /// ================================================================= DEVICE
+
+    pub fn get_config(&self) -> &HantekConfig {
+        &self.config
     }
 
     pub fn start(&mut self) -> Result<(), Hantek2D42Error> {
