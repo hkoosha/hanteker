@@ -5,7 +5,7 @@ use std::time::Duration;
 use clap::ArgEnum;
 use strum_macros::{Display, EnumString};
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Adjustment {
     pub upper: f32,
     pub lower: f32,
@@ -34,7 +34,7 @@ impl Adjustment {
     }
 }
 
-#[derive(Display, Debug, Clone, EnumString, ArgEnum)]
+#[derive(Display, Debug, Clone, EnumString, ArgEnum, PartialEq, Eq)]
 pub enum DeviceFunction {
     Scope,
     AWG,
@@ -48,7 +48,7 @@ impl DeviceFunction {
     }
 }
 
-#[derive(Display, Debug, Clone, EnumString, ArgEnum)]
+#[derive(Display, Debug, Clone, EnumString, ArgEnum, PartialEq, Eq)]
 pub enum RunningStatus {
     Start,
     Stop,
@@ -61,7 +61,7 @@ impl RunningStatus {
     }
 }
 
-#[derive(Display, Debug, Clone, EnumString, ArgEnum)]
+#[derive(Display, Debug, Clone, EnumString, ArgEnum, PartialEq, Eq)]
 pub enum Coupling {
     AC,
     DC,
@@ -75,7 +75,7 @@ impl Coupling {
     }
 }
 
-#[derive(Display, Debug, Clone, EnumString, ArgEnum)]
+#[derive(Display, Debug, Clone, EnumString, ArgEnum, PartialEq, Eq)]
 pub enum Probe {
     X1,
     X10,
@@ -91,7 +91,7 @@ impl Probe {
 }
 
 #[allow(non_camel_case_types)]
-#[derive(Display, Debug, Clone, EnumString, ArgEnum)]
+#[derive(Display, Debug, Clone, EnumString, ArgEnum, PartialEq, Eq)]
 pub enum Scale {
     mv10,
     mv20,
@@ -134,7 +134,7 @@ impl Scale {
 }
 
 #[allow(non_camel_case_types)]
-#[derive(Display, Debug, Clone, EnumString, ArgEnum)]
+#[derive(Display, Debug, Clone, EnumString, ArgEnum, PartialEq, Eq)]
 pub enum TimeScale {
     ns5,
     ns10,
@@ -180,7 +180,7 @@ impl TimeScale {
 }
 
 #[allow(non_camel_case_types)]
-#[derive(Display, Debug, Clone, EnumString, ArgEnum)]
+#[derive(Display, Debug, Clone, EnumString, ArgEnum, PartialEq, Eq)]
 pub enum TriggerSlope {
     Rising,
     Falling,
@@ -195,7 +195,7 @@ impl TriggerSlope {
 }
 
 #[allow(non_camel_case_types)]
-#[derive(Display, Debug, Clone, EnumString, ArgEnum)]
+#[derive(Display, Debug, Clone, EnumString, ArgEnum, PartialEq, Eq)]
 pub enum TriggerMode {
     Auto,
     Normal,
@@ -210,7 +210,7 @@ impl TriggerMode {
 }
 
 #[allow(non_camel_case_types)]
-#[derive(Display, Debug, Clone, EnumString, ArgEnum)]
+#[derive(Display, Debug, Clone, EnumString, ArgEnum, PartialEq, Eq)]
 pub enum AwgType {
     Square,
     Ramp,
@@ -229,7 +229,7 @@ impl AwgType {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct TrapDuty {
     pub high: f32,
     pub low: f32,
