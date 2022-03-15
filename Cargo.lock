@@ -121,7 +121,7 @@ dependencies = [
  "anyhow",
  "clap",
  "clap_complete",
- "hanteker_lib 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "hanteker_lib",
  "libusb",
  "log",
  "pretty_env_logger",
@@ -130,20 +130,6 @@ dependencies = [
 [[package]]
 name = "hanteker_lib"
 version = "0.2.0"
-dependencies = [
- "clap",
- "libusb",
- "log",
- "strum",
- "strum_macros",
- "thiserror",
-]
-
-[[package]]
-name = "hanteker_lib"
-version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "73f76330b4e44bc17b0e279d1373dc1e51e08bf607a9a9949ed68a8b1ab6528e"
 dependencies = [
  "clap",
  "libusb",

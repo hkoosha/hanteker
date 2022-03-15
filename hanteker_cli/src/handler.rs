@@ -1,14 +1,14 @@
-use std::io::Write;
 use std::{env, io};
+use std::fmt::Display;
+use std::io::Write;
 
 use anyhow::bail;
 use clap_complete::generate;
-use log::warn;
-
 use hanteker_lib::device::cfg::DeviceFunction;
 use hanteker_lib::models::hantek2d42::Hantek2D42;
+use log::{error, warn};
 
-use crate::cli::{cli_command, AwgCli, CaptureCli, ChannelCli, Cli, DeviceCli, ScopeCli, ShellCli};
+use crate::cli::{AwgCli, CaptureCli, ChannelCli, Cli, cli_command, DeviceCli, ScopeCli, ShellCli};
 
 pub(crate) fn handle_shell(_parent: &Cli, s: &ShellCli) {
     let name = match &s.name_override {
@@ -39,8 +39,8 @@ pub(crate) fn handle_device(
         hantek.stop()?;
     }
 
-    if cli.mode.is_some() {
-        hantek.set_device_function(cli.mode.as_ref().unwrap().clone())?;
+    if let Some(mode) = &cli.mode {
+        hantek.set_device_function(mode.clone())?;
     }
 
     Ok(())
@@ -55,24 +55,24 @@ pub(crate) fn handle_scope(
         hantek.set_device_function(DeviceFunction::Scope)?;
     }
 
-    if cli.time_scale.is_some() {
-        hantek.set_time_scale(cli.time_scale.as_ref().unwrap().clone())?;
+    if let Some(time_scale) = &cli.time_scale {
+        hantek.set_time_scale(time_scale.clone())?;
     }
-    if cli.time_offset.is_some() {
-        hantek.set_time_offset_with_auto_adjustment(cli.time_offset.unwrap())?;
+    if let Some(time_offset) = &cli.time_offset {
+        hantek.set_time_offset_with_auto_adjustment(*time_offset)?;
     }
 
-    if cli.trigger_source.is_some() {
-        hantek.set_trigger_source(cli.trigger_source.unwrap())?;
+    if let Some(trigger_source) = &cli.trigger_source {
+        hantek.set_trigger_source(*trigger_source)?;
     }
-    if cli.trigger_level.is_some() {
-        hantek.set_trigger_level_with_auto_adjustment(cli.trigger_level.unwrap())?;
+    if let Some(trigger_level) = &cli.trigger_level {
+        hantek.set_trigger_level_with_auto_adjustment(*trigger_level)?;
     }
-    if cli.trigger_slope.is_some() {
-        hantek.set_trigger_slope(cli.trigger_slope.as_ref().unwrap().clone())?;
+    if let Some(trigger_slope) = &cli.trigger_slope {
+        hantek.set_trigger_slope(trigger_slope.clone())?;
     }
-    if cli.trigger_mode.is_some() {
-        hantek.set_trigger_mode(cli.trigger_mode.as_ref().unwrap().clone())?;
+    if let Some(trigger_mode) = &cli.trigger_mode {
+        hantek.set_trigger_mode(trigger_mode.clone())?;
     }
 
     Ok(())
@@ -101,16 +101,16 @@ pub(crate) fn handle_channel(
         hantek.channel_disable_bandwidth_limit(cli.channel)?;
     }
 
-    if cli.probe.is_some() {
-        hantek.set_channel_probe(cli.channel, cli.probe.as_ref().unwrap().clone())?;
+    if let Some(probe) = &cli.probe {
+        hantek.set_channel_probe(cli.channel, probe.clone())?;
     }
 
-    if cli.scale.is_some() {
-        hantek.set_channel_scale(cli.channel, cli.scale.as_ref().unwrap().clone())?;
+    if let Some(scale) = &cli.scale {
+        hantek.set_channel_scale(cli.channel, scale.clone())?;
     }
 
-    if cli.offset.is_some() {
-        hantek.set_channel_offset_with_auto_adjustment(cli.channel, cli.offset.unwrap())?;
+    if let Some(offset) = &cli.offset {
+        hantek.set_channel_offset_with_auto_adjustment(cli.channel, *offset)?;
     }
 
     Ok(())
@@ -143,8 +143,15 @@ pub(crate) fn handle_capture(
         Some(num) => {
             for _ in 0..num {
                 let captured = hantek
-                    .capture(&cli.channel, cli.capture_chunk)
-                    .expect("capture failed");
+                    .capture(&cli.channel, cli.capture_chunk);
+
+                if let Err(e) = captured {
+                    // Cast to make CLion happy.
+                    error!("error: {}", &e as &dyn Display);
+                    std::process::exit(1);
+                }
+
+                let captured = captured.unwrap();
                 if lock.write_all(&captured).is_err() || lock.flush().is_err() {
                     // Probably stream closed.
                     std::process::exit(0);
@@ -166,8 +173,8 @@ pub(crate) fn handle_awg(
 
     if (cli.duty_trap_high.is_some() || cli.duty_trap_low.is_some() || cli.duty_trap_rise.is_some())
         && (cli.duty_trap_high.is_none()
-            || cli.duty_trap_rise.is_none()
-            || cli.duty_trap_low.is_none())
+        || cli.duty_trap_rise.is_none()
+        || cli.duty_trap_low.is_none())
     {
         bail!("When specifying duty for trap, all three duties must be specified at the same time: high, low and rise.");
     }

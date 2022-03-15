@@ -20,7 +20,7 @@ const READ_ENDPOINT: u8 = 0x80 | 1;
 
 #[derive(Error, Debug)]
 pub enum Hantek2D42Error {
-    #[error("error with usb device")]
+    #[error("error with usb device: {error}")]
     HantekUsbError {
         error: HantekUsbError,
         failed_action: &'static str,

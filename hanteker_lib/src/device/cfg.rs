@@ -35,9 +35,9 @@ impl Adjustment {
     }
 
     pub fn same(&self, other: &Self) -> bool {
-        return (self.upper == other.upper && self.lower == other.lower)
+        (self.upper == other.upper && self.lower == other.lower)
             || (self.upper.to_bits() == other.upper.to_bits()
-                && self.lower.to_bits() == other.lower.to_bits());
+            && self.lower.to_bits() == other.lower.to_bits())
     }
 }
 
@@ -245,10 +245,10 @@ pub struct TrapDuty {
 
 impl TrapDuty {
     pub fn same(&self, other: &Self) -> bool {
-        return (self.high == other.high && self.low == other.low && self.rise == other.rise)
+        (self.high == other.high && self.low == other.low && self.rise == other.rise)
             || (self.high.to_bits() == other.high.to_bits()
-                && self.low.to_bits() == other.low.to_bits()
-                && self.rise.to_bits() == other.rise.to_bits());
+            && self.low.to_bits() == other.low.to_bits()
+            && self.rise.to_bits() == other.rise.to_bits())
     }
 }
 
@@ -471,5 +471,5 @@ fn compare_map<K: std::cmp::Eq + Hash, V>(
 ) -> bool {
     m0.len() == m1.len()
         && m0.keys().all(|k| m1.contains_key(k))
-        && m0.into_iter().all(|(k0, v0)| comparator(v0, &m1[k0]))
+        && m0.iter().all(|(k0, v0)| comparator(v0, &m1[k0]))
 }

@@ -226,7 +226,7 @@ impl<'a> HantekUsbDevice<'a> {
     }
 
     pub fn write(&mut self, endpoint: u8, buf: &[u8]) -> Result<usize, HantekUsbError> {
-        if let None = self.claimed_interface {
+        if self.claimed_interface.is_none() {
             return Err(HantekUsbError::NoInterfaceClaimed);
         }
 
@@ -236,7 +236,7 @@ impl<'a> HantekUsbDevice<'a> {
     }
 
     pub fn read(&mut self, endpoint: u8, buf: &mut [u8]) -> Result<usize, HantekUsbError> {
-        if let None = self.claimed_interface {
+        if self.claimed_interface.is_none() {
             return Err(HantekUsbError::NoInterfaceClaimed);
         }
 
