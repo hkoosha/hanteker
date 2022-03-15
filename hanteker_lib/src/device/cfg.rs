@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::hash::Hash;
 /// TODO not all types need to be float, some should actually be u32, e.g. AWG Amplitude.
 use std::time::Duration;
 
@@ -307,4 +308,147 @@ impl HantekConfig {
             awg_running_status: None,
         }
     }
+
+    pub fn same(&self, other: &Self) -> bool {
+        if self.timeout != other.timeout {
+            return false;
+        }
+
+        if self.device_function != other.device_function {
+            return false;
+        }
+
+        if self.enabled_channels != other.enabled_channels {
+            return false;
+        }
+        if self.channel_coupling != other.channel_coupling {
+            return false;
+        }
+        if self.channel_probe != other.channel_probe {
+            return false;
+        }
+        if self.channel_scale != other.channel_scale {
+            return false;
+        }
+        if self.channel_bandwidth_limit != other.channel_bandwidth_limit {
+            return false;
+        }
+
+        if !compare_map(&self.channel_offset,
+                        &other.channel_offset,
+                        compare_some_f32) {
+            return false;
+        }
+
+        if !compare_map(&self.channel_offset_adjustment,
+                        &other.channel_offset_adjustment,
+                        compare_some_adjustment) {
+            return false;
+        }
+
+        if self.time_scale != other.time_scale {
+            return false;
+        }
+        if !compare_some_f32(&self.time_offset, &other.time_offset) {
+            return false;
+        }
+        if !compare_some_adjustment(&self.time_offset_adjustment, &other.time_offset_adjustment) {
+            return false;
+        }
+
+        if self.running_status != other.running_status {
+            return false;
+        }
+        if self.trigger_source_channel != other.trigger_source_channel {
+            return false;
+        }
+        if self.trigger_slope != other.trigger_slope {
+            return false;
+        }
+        if self.trigger_mode != other.trigger_mode {
+            return false;
+        }
+
+        if !compare_some_adjustment(&self.trigger_level_adjustment, &other.trigger_level_adjustment) {
+            return false;
+        }
+        if !compare_some_f32(&self.trigger_level, &other.trigger_level) {
+            return false;
+        }
+
+        if self.awg_type != other.awg_type {
+            return false;
+        }
+
+        if !compare_some_f32(&self.awg_frequency, &other.awg_frequency) {
+            return false;
+        }
+        if !compare_some_f32(&self.awg_amplitude, &other.awg_amplitude) {
+            return false;
+        }
+        if !compare_some_f32(&self.awg_offset, &other.awg_offset) {
+            return false;
+        }
+        if !compare_some_f32(&self.awg_duty_square, &other.awg_duty_square) {
+            return false;
+        }
+        if !compare_some_f32(&self.awg_duty_ramp, &other.awg_duty_ramp) {
+            return false;
+        }
+        if !compare_some_trap_duty(&self.awg_duty_trap, &other.awg_duty_trap) {
+            return false;
+        }
+        if self.awg_running_status != other.awg_running_status {
+            return false;
+        }
+
+        true
+    }
+}
+
+
+fn compare_some_trap_duty(t0: &Option<TrapDuty>, t1: &Option<TrapDuty>) -> bool {
+    if t0.is_some() != t1.is_some() {
+        false
+    } else if t0.is_some() {
+        let t0 = t0.as_ref().unwrap();
+        let t1 = t1.as_ref().unwrap();
+        t0.rise.to_bits() == t1.rise.to_bits()
+            && t0.low.to_bits() == t1.low.to_bits()
+            && t0.high.to_bits() == t1.high.to_bits()
+    } else {
+        true
+    }
+}
+
+fn compare_some_f32(f0: &Option<f32>, f1: &Option<f32>) -> bool {
+    if f0.is_some() != f1.is_some() {
+        false
+    } else if f0.is_some() {
+        let f0 = f0.unwrap().to_bits();
+        let f1 = f1.unwrap().to_bits();
+        f0 == f1
+    } else {
+        true
+    }
+}
+
+fn compare_some_adjustment(a0: &Option<Adjustment>, a1: &Option<Adjustment>) -> bool {
+    if a0.is_some() != a1.is_some() {
+        false
+    } else if a0.is_some() {
+        let a0 = a0.as_ref().unwrap();
+        let a1 = a1.as_ref().unwrap();
+        a0.lower.to_bits() == a1.lower.to_bits() && a0.upper.to_bits() == a1.upper.to_bits()
+    } else {
+        true
+    }
+}
+
+fn compare_map<K: std::cmp::Eq + Hash, V>(m0: &HashMap<K, V>,
+                                          m1: &HashMap<K, V>,
+                                          comparator: impl Fn(&V, &V) -> bool) -> bool {
+    m0.len() == m1.len()
+        && m0.keys().all(|k| m1.contains_key(k))
+        && m0.into_iter().all(|(k0, v0)| comparator(v0, &m1[k0]))
 }
