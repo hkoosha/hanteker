@@ -33,6 +33,12 @@ impl Adjustment {
     pub fn limits_are_zero(&self) -> bool {
         self.upper == 0.0 && self.lower == 0.0
     }
+
+    pub fn same(&self, other: &Self) -> bool {
+        return (self.upper == other.upper && self.lower == other.lower)
+            || (self.upper.to_bits() == other.upper.to_bits()
+                && self.lower.to_bits() == other.lower.to_bits());
+    }
 }
 
 #[derive(Display, Debug, Clone, EnumString, ArgEnum, PartialEq, Eq)]
@@ -237,6 +243,15 @@ pub struct TrapDuty {
     pub rise: f32,
 }
 
+impl TrapDuty {
+    pub fn same(&self, other: &Self) -> bool {
+        return (self.high == other.high && self.low == other.low && self.rise == other.rise)
+            || (self.high.to_bits() == other.high.to_bits()
+                && self.low.to_bits() == other.low.to_bits()
+                && self.rise.to_bits() == other.rise.to_bits());
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct HantekConfig {
     pub timeout: Option<Duration>,
@@ -334,15 +349,19 @@ impl HantekConfig {
             return false;
         }
 
-        if !compare_map(&self.channel_offset,
-                        &other.channel_offset,
-                        compare_some_f32) {
+        if !compare_map(
+            &self.channel_offset,
+            &other.channel_offset,
+            compare_some_f32,
+        ) {
             return false;
         }
 
-        if !compare_map(&self.channel_offset_adjustment,
-                        &other.channel_offset_adjustment,
-                        compare_some_adjustment) {
+        if !compare_map(
+            &self.channel_offset_adjustment,
+            &other.channel_offset_adjustment,
+            compare_some_adjustment,
+        ) {
             return false;
         }
 
@@ -369,7 +388,10 @@ impl HantekConfig {
             return false;
         }
 
-        if !compare_some_adjustment(&self.trigger_level_adjustment, &other.trigger_level_adjustment) {
+        if !compare_some_adjustment(
+            &self.trigger_level_adjustment,
+            &other.trigger_level_adjustment,
+        ) {
             return false;
         }
         if !compare_some_f32(&self.trigger_level, &other.trigger_level) {
@@ -406,16 +428,13 @@ impl HantekConfig {
     }
 }
 
-
 fn compare_some_trap_duty(t0: &Option<TrapDuty>, t1: &Option<TrapDuty>) -> bool {
     if t0.is_some() != t1.is_some() {
         false
     } else if t0.is_some() {
         let t0 = t0.as_ref().unwrap();
         let t1 = t1.as_ref().unwrap();
-        t0.rise.to_bits() == t1.rise.to_bits()
-            && t0.low.to_bits() == t1.low.to_bits()
-            && t0.high.to_bits() == t1.high.to_bits()
+        t0.same(t1)
     } else {
         true
     }
@@ -439,15 +458,17 @@ fn compare_some_adjustment(a0: &Option<Adjustment>, a1: &Option<Adjustment>) -> 
     } else if a0.is_some() {
         let a0 = a0.as_ref().unwrap();
         let a1 = a1.as_ref().unwrap();
-        a0.lower.to_bits() == a1.lower.to_bits() && a0.upper.to_bits() == a1.upper.to_bits()
+        a0.same(a1)
     } else {
         true
     }
 }
 
-fn compare_map<K: std::cmp::Eq + Hash, V>(m0: &HashMap<K, V>,
-                                          m1: &HashMap<K, V>,
-                                          comparator: impl Fn(&V, &V) -> bool) -> bool {
+fn compare_map<K: std::cmp::Eq + Hash, V>(
+    m0: &HashMap<K, V>,
+    m1: &HashMap<K, V>,
+    comparator: impl Fn(&V, &V) -> bool,
+) -> bool {
     m0.len() == m1.len()
         && m0.keys().all(|k| m1.contains_key(k))
         && m0.into_iter().all(|(k0, v0)| comparator(v0, &m1[k0]))

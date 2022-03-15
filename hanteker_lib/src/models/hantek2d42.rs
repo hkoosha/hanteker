@@ -3,7 +3,10 @@ use std::time::Duration;
 use libusb::Context;
 use thiserror::Error;
 
-use crate::device::cfg::{Adjustment, AwgType, Coupling, DeviceFunction, HantekConfig, Probe, RunningStatus, Scale, TimeScale, TrapDuty, TriggerMode, TriggerSlope};
+use crate::device::cfg::{
+    Adjustment, AwgType, Coupling, DeviceFunction, HantekConfig, Probe, RunningStatus, Scale,
+    TimeScale, TrapDuty, TriggerMode, TriggerSlope,
+};
 use crate::device::cmd::{HantekCommandBuilder, RawCommand};
 use crate::device::usb::{HantekUsbDevice, HantekUsbError};
 use crate::models::hantek2d42_codes::*;
@@ -40,10 +43,7 @@ pub struct Hantek2D42<'a> {
 
 impl<'a> Hantek2D42<'a> {
     pub fn new(usb: HantekUsbDevice<'a>, config: HantekConfig) -> Self {
-        Self {
-            usb,
-            config,
-        }
+        Self { usb, config }
     }
 
     pub fn open(context: &'a Context, timeout: Duration) -> Result<Self, Hantek2D42Error> {
@@ -191,7 +191,9 @@ impl<'a> Hantek2D42<'a> {
                 failed_action: "setting channel coupling",
             })
             .map(|_| {
-                self.config.channel_coupling.insert(channel_no, Some(coupling));
+                self.config
+                    .channel_coupling
+                    .insert(channel_no, Some(coupling));
             })
     }
 
@@ -261,10 +263,13 @@ impl<'a> Hantek2D42<'a> {
                 failed_action: "setting channel scale",
             })
             .map(|_| {
-                self.config.channel_offset_adjustment.insert(channel_no, Some(Adjustment::new(
-                    4.0 * scale.raw_value(),
-                    -4.0 * scale.raw_value(),
-                )));
+                self.config.channel_offset_adjustment.insert(
+                    channel_no,
+                    Some(Adjustment::new(
+                        4.0 * scale.raw_value(),
+                        -4.0 * scale.raw_value(),
+                    )),
+                );
                 self.config.channel_scale.insert(channel_no, Some(scale));
             })
     }
@@ -325,7 +330,9 @@ impl<'a> Hantek2D42<'a> {
                 failed_action: "setting channel offset",
             })
             .map(|_| {
-                self.config.channel_offset.insert(channel_no, Some(offset as f32));
+                self.config
+                    .channel_offset
+                    .insert(channel_no, Some(offset as f32));
             })
     }
 
@@ -351,7 +358,9 @@ impl<'a> Hantek2D42<'a> {
                 failed_action: "enabling channel bandwidth limit",
             })
             .map(|_| {
-                self.config.channel_bandwidth_limit.insert(channel_no, Some(true));
+                self.config
+                    .channel_bandwidth_limit
+                    .insert(channel_no, Some(true));
             })
     }
 
@@ -377,7 +386,9 @@ impl<'a> Hantek2D42<'a> {
                 failed_action: "disabling channel bandwidth limit",
             })
             .map(|_| {
-                self.config.channel_bandwidth_limit.insert(channel_no, Some(false));
+                self.config
+                    .channel_bandwidth_limit
+                    .insert(channel_no, Some(false));
             })
     }
 
@@ -483,10 +494,8 @@ impl<'a> Hantek2D42<'a> {
                 failed_action: "setting time scale",
             })
             .map(|_| {
-                self.config.time_offset_adjustment = Some(Adjustment::new(
-                    15.0 * (raw as f32),
-                    -15.0 * (raw as f32),
-                ));
+                self.config.time_offset_adjustment =
+                    Some(Adjustment::new(15.0 * (raw as f32), -15.0 * (raw as f32)));
                 self.config.time_scale = Some(time_scale);
             })
     }
@@ -540,9 +549,7 @@ impl<'a> Hantek2D42<'a> {
     pub fn set_trigger_source(&mut self, channel_no: usize) -> Result<(), Hantek2D42Error> {
         self.assert_channel_no(channel_no);
 
-        let scale = self
-            .config
-            .channel_scale[&channel_no]
+        let scale = self.config.channel_scale[&channel_no]
             .as_ref()
             .map(|it| it.raw_value());
         if scale.is_none() {
@@ -563,10 +570,8 @@ impl<'a> Hantek2D42<'a> {
             })
             .map(|_| {
                 self.config.trigger_source_channel = Some(channel_no);
-                self.config.trigger_level_adjustment = Some(Adjustment::new(
-                    4.0 * scale,
-                    -4.0 * scale,
-                ));
+                self.config.trigger_level_adjustment =
+                    Some(Adjustment::new(4.0 * scale, -4.0 * scale));
             })
     }
 
@@ -657,9 +662,7 @@ impl<'a> Hantek2D42<'a> {
                 error,
                 failed_action: "setting trigger level",
             })
-            .map(|_| {
-                self.config.trigger_level = Some(trigger_level as f32)
-            })
+            .map(|_| self.config.trigger_level = Some(trigger_level as f32))
     }
 
     ///=================================================================== AWG
@@ -824,11 +827,7 @@ impl<'a> Hantek2D42<'a> {
                 failed_action: "setting awg ramp duty",
             })
             .map(|_| {
-                self.config.awg_duty_trap = Some(TrapDuty {
-                    high,
-                    low,
-                    rise,
-                });
+                self.config.awg_duty_trap = Some(TrapDuty { high, low, rise });
             })
     }
 

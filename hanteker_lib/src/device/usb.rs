@@ -196,7 +196,9 @@ impl<'a> HantekUsbDevice<'a> {
 
     pub fn claim(&mut self) -> Result<(), HantekUsbError> {
         if let Some(already_claimed) = self.claimed_interface {
-            return Err(HantekUsbError::InterfaceAlreadyClaimed { interface: already_claimed });
+            return Err(HantekUsbError::InterfaceAlreadyClaimed {
+                interface: already_claimed,
+            });
         }
 
         let mut errors = vec![];
