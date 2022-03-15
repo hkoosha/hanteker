@@ -14,3 +14,9 @@ strum_macros = "0.24"
 clap = { version = "3.1", features = ["derive"] }
 
 libusb = "0.3"
+
+druid = { git = "https://github.com/linebender/druid", rev = "fc05e965c85fced8720c655685e02478e0530e94", optional = true }
+
+[features]
+default = []
+gui = ["druid"]

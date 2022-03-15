@@ -1,12 +1,17 @@
+//! TODO not all types need to be float, some should actually be u32, e.g. AWG Amplitude.
+
 use std::collections::HashMap;
+#[cfg(feature = "gui")]
 use std::hash::Hash;
-/// TODO not all types need to be float, some should actually be u32, e.g. AWG Amplitude.
 use std::time::Duration;
 
 use clap::ArgEnum;
+#[cfg(feature = "gui")]
+use druid::Data;
 use strum_macros::{Display, EnumString};
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "gui", derive(Data))]
 pub struct Adjustment {
     pub upper: f32,
     pub lower: f32,
@@ -42,6 +47,7 @@ impl Adjustment {
 }
 
 #[derive(Display, Debug, Clone, EnumString, ArgEnum, PartialEq, Eq)]
+#[cfg_attr(feature = "gui", derive(Data))]
 pub enum DeviceFunction {
     Scope,
     AWG,
@@ -56,6 +62,7 @@ impl DeviceFunction {
 }
 
 #[derive(Display, Debug, Clone, EnumString, ArgEnum, PartialEq, Eq)]
+#[cfg_attr(feature = "gui", derive(Data))]
 pub enum RunningStatus {
     Start,
     Stop,
@@ -69,6 +76,7 @@ impl RunningStatus {
 }
 
 #[derive(Display, Debug, Clone, EnumString, ArgEnum, PartialEq, Eq)]
+#[cfg_attr(feature = "gui", derive(Data))]
 pub enum Coupling {
     AC,
     DC,
@@ -83,6 +91,7 @@ impl Coupling {
 }
 
 #[derive(Display, Debug, Clone, EnumString, ArgEnum, PartialEq, Eq)]
+#[cfg_attr(feature = "gui", derive(Data))]
 pub enum Probe {
     X1,
     X10,
@@ -99,6 +108,7 @@ impl Probe {
 
 #[allow(non_camel_case_types)]
 #[derive(Display, Debug, Clone, EnumString, ArgEnum, PartialEq, Eq)]
+#[cfg_attr(feature = "gui", derive(Data))]
 pub enum Scale {
     mv10,
     mv20,
@@ -142,6 +152,7 @@ impl Scale {
 
 #[allow(non_camel_case_types)]
 #[derive(Display, Debug, Clone, EnumString, ArgEnum, PartialEq, Eq)]
+#[cfg_attr(feature = "gui", derive(Data))]
 pub enum TimeScale {
     ns5,
     ns10,
@@ -188,6 +199,7 @@ impl TimeScale {
 
 #[allow(non_camel_case_types)]
 #[derive(Display, Debug, Clone, EnumString, ArgEnum, PartialEq, Eq)]
+#[cfg_attr(feature = "gui", derive(Data))]
 pub enum TriggerSlope {
     Rising,
     Falling,
@@ -203,6 +215,7 @@ impl TriggerSlope {
 
 #[allow(non_camel_case_types)]
 #[derive(Display, Debug, Clone, EnumString, ArgEnum, PartialEq, Eq)]
+#[cfg_attr(feature = "gui", derive(Data))]
 pub enum TriggerMode {
     Auto,
     Normal,
@@ -218,6 +231,7 @@ impl TriggerMode {
 
 #[allow(non_camel_case_types)]
 #[derive(Display, Debug, Clone, EnumString, ArgEnum, PartialEq, Eq)]
+#[cfg_attr(feature = "gui", derive(Data))]
 pub enum AwgType {
     Square,
     Ramp,
@@ -237,6 +251,7 @@ impl AwgType {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "gui", derive(Data))]
 pub struct TrapDuty {
     pub high: f32,
     pub low: f32,
@@ -323,8 +338,11 @@ impl HantekConfig {
             awg_running_status: None,
         }
     }
+}
 
-    pub fn same(&self, other: &Self) -> bool {
+#[cfg(feature = "gui")]
+impl Data for HantekConfig {
+    fn same(&self, other: &Self) -> bool {
         if self.timeout != other.timeout {
             return false;
         }
@@ -428,6 +446,7 @@ impl HantekConfig {
     }
 }
 
+#[cfg(feature = "gui")]
 fn compare_some_trap_duty(t0: &Option<TrapDuty>, t1: &Option<TrapDuty>) -> bool {
     if t0.is_some() != t1.is_some() {
         false
@@ -440,6 +459,7 @@ fn compare_some_trap_duty(t0: &Option<TrapDuty>, t1: &Option<TrapDuty>) -> bool 
     }
 }
 
+#[cfg(feature = "gui")]
 fn compare_some_f32(f0: &Option<f32>, f1: &Option<f32>) -> bool {
     if f0.is_some() != f1.is_some() {
         false
@@ -452,6 +472,7 @@ fn compare_some_f32(f0: &Option<f32>, f1: &Option<f32>) -> bool {
     }
 }
 
+#[cfg(feature = "gui")]
 fn compare_some_adjustment(a0: &Option<Adjustment>, a1: &Option<Adjustment>) -> bool {
     if a0.is_some() != a1.is_some() {
         false
@@ -464,6 +485,7 @@ fn compare_some_adjustment(a0: &Option<Adjustment>, a1: &Option<Adjustment>) -> 
     }
 }
 
+#[cfg(feature = "gui")]
 fn compare_map<K: std::cmp::Eq + Hash, V>(
     m0: &HashMap<K, V>,
     m1: &HashMap<K, V>,
