@@ -5,6 +5,7 @@ use std::collections::HashMap;
 use std::hash::Hash;
 use std::time::Duration;
 
+#[cfg(feature = "cli")]
 use clap::ArgEnum;
 #[cfg(feature = "gui")]
 use druid::Data;
@@ -46,7 +47,8 @@ impl Adjustment {
     }
 }
 
-#[derive(Display, Debug, Clone, EnumString, ArgEnum, PartialEq, Eq)]
+#[derive(Display, Debug, Clone, EnumString, PartialEq, Eq)]
+#[cfg_attr(feature = "cli", derive(ArgEnum))]
 #[cfg_attr(feature = "gui", derive(Data))]
 pub enum DeviceFunction {
     Scope,
@@ -61,7 +63,8 @@ impl DeviceFunction {
     }
 }
 
-#[derive(Display, Debug, Clone, EnumString, ArgEnum, PartialEq, Eq)]
+#[derive(Display, Debug, Clone, EnumString, PartialEq, Eq)]
+#[cfg_attr(feature = "cli", derive(ArgEnum))]
 #[cfg_attr(feature = "gui", derive(Data))]
 pub enum RunningStatus {
     Start,
@@ -75,7 +78,8 @@ impl RunningStatus {
     }
 }
 
-#[derive(Display, Debug, Clone, EnumString, ArgEnum, PartialEq, Eq)]
+#[derive(Display, Debug, Clone, EnumString, PartialEq, Eq)]
+#[cfg_attr(feature = "cli", derive(ArgEnum))]
 #[cfg_attr(feature = "gui", derive(Data))]
 pub enum Coupling {
     AC,
@@ -90,7 +94,8 @@ impl Coupling {
     }
 }
 
-#[derive(Display, Debug, Clone, EnumString, ArgEnum, PartialEq, Eq)]
+#[derive(Display, Debug, Clone, EnumString, PartialEq, Eq)]
+#[cfg_attr(feature = "cli", derive(ArgEnum))]
 #[cfg_attr(feature = "gui", derive(Data))]
 pub enum Probe {
     X1,
@@ -107,7 +112,8 @@ impl Probe {
 }
 
 #[allow(non_camel_case_types)]
-#[derive(Display, Debug, Clone, EnumString, ArgEnum, PartialEq, Eq)]
+#[derive(Display, Debug, Clone, EnumString, PartialEq, Eq)]
+#[cfg_attr(feature = "cli", derive(ArgEnum))]
 #[cfg_attr(feature = "gui", derive(Data))]
 pub enum Scale {
     mv10,
@@ -151,7 +157,8 @@ impl Scale {
 }
 
 #[allow(non_camel_case_types)]
-#[derive(Display, Debug, Clone, EnumString, ArgEnum, PartialEq, Eq)]
+#[derive(Display, Debug, Clone, EnumString, PartialEq, Eq)]
+#[cfg_attr(feature = "cli", derive(ArgEnum))]
 #[cfg_attr(feature = "gui", derive(Data))]
 pub enum TimeScale {
     ns5,
@@ -198,7 +205,8 @@ impl TimeScale {
 }
 
 #[allow(non_camel_case_types)]
-#[derive(Display, Debug, Clone, EnumString, ArgEnum, PartialEq, Eq)]
+#[derive(Display, Debug, Clone, EnumString, PartialEq, Eq)]
+#[cfg_attr(feature = "cli", derive(ArgEnum))]
 #[cfg_attr(feature = "gui", derive(Data))]
 pub enum TriggerSlope {
     Rising,
@@ -214,7 +222,8 @@ impl TriggerSlope {
 }
 
 #[allow(non_camel_case_types)]
-#[derive(Display, Debug, Clone, EnumString, ArgEnum, PartialEq, Eq)]
+#[derive(Display, Debug, Clone, EnumString, PartialEq, Eq)]
+#[cfg_attr(feature = "cli", derive(ArgEnum))]
 #[cfg_attr(feature = "gui", derive(Data))]
 pub enum TriggerMode {
     Auto,
@@ -230,7 +239,8 @@ impl TriggerMode {
 }
 
 #[allow(non_camel_case_types)]
-#[derive(Display, Debug, Clone, EnumString, ArgEnum, PartialEq, Eq)]
+#[derive(Display, Debug, Clone, EnumString, PartialEq, Eq)]
+#[cfg_attr(feature = "cli", derive(ArgEnum))]
 #[cfg_attr(feature = "gui", derive(Data))]
 pub enum AwgType {
     Square,
