@@ -57,6 +57,14 @@ pub enum DeviceFunction {
 }
 
 impl DeviceFunction {
+    pub fn values() -> [Self; 3] {
+        [
+            Self::Scope,
+            Self::AWG,
+            Self::DMM,
+        ]
+    }
+
     // Because CLion doesn't like the Display implemented by strum.
     pub fn my_to_string(&self) -> impl std::fmt::Display + '_ {
         self
@@ -72,6 +80,13 @@ pub enum RunningStatus {
 }
 
 impl RunningStatus {
+    pub fn values() -> [Self; 2] {
+        [
+            Self::Stop,
+            Self::Start,
+        ]
+    }
+
     // Because CLion doesn't like the Display implemented by strum.
     pub fn my_to_string(&self) -> impl std::fmt::Display + '_ {
         self
@@ -88,6 +103,14 @@ pub enum Coupling {
 }
 
 impl Coupling {
+    pub fn values() -> [Self; 3] {
+        [
+            Self::AC,
+            Self::DC,
+            Self::GND,
+        ]
+    }
+
     // Because CLion doesn't like the Display implemented by strum.
     pub fn my_to_string(&self) -> impl std::fmt::Display + '_ {
         self
@@ -105,6 +128,15 @@ pub enum Probe {
 }
 
 impl Probe {
+    pub fn values() -> [Self; 4] {
+        [
+            Self::X1,
+            Self::X10,
+            Self::X100,
+            Self::X1000,
+        ]
+    }
+
     // Because CLion doesn't like the Display implemented by strum.
     pub fn my_to_string(&self) -> impl std::fmt::Display + '_ {
         self
@@ -132,6 +164,21 @@ pub enum Scale {
 }
 
 impl Scale {
+    pub fn values() -> [Self; 10] {
+        [
+            Self::mv10,
+            Self::mv20,
+            Self::mv50,
+            Self::mv100,
+            Self::mv200,
+            Self::mv500,
+            Self::v1,
+            Self::v2,
+            Self::v5,
+            Self::v10,
+        ]
+    }
+
     // Because CLion doesn't like the Display implemented by strum.
     pub fn my_to_string(&self) -> impl std::fmt::Display + '_ {
         self
@@ -198,6 +245,45 @@ pub enum TimeScale {
 }
 
 impl TimeScale {
+    pub fn values() -> [Self; 34] {
+        [
+            Self::ns5,
+            Self::ns10,
+            Self::ns20,
+            Self::ns50,
+            Self::ns100,
+            Self::ns200,
+            Self::ns500,
+            Self::us1,
+            Self::us2,
+            Self::us5,
+            Self::us10,
+            Self::us20,
+            Self::us50,
+            Self::us100,
+            Self::us200,
+            Self::us500,
+            Self::ms1,
+            Self::ms2,
+            Self::ms5,
+            Self::ms10,
+            Self::ms20,
+            Self::ms50,
+            Self::ms100,
+            Self::ms200,
+            Self::ms500,
+            Self::s1,
+            Self::s2,
+            Self::s5,
+            Self::s10,
+            Self::s20,
+            Self::s50,
+            Self::s100,
+            Self::s200,
+            Self::s500,
+        ]
+    }
+
     // Because CLion doesn't like the Display implemented by strum.
     pub fn my_to_string(&self) -> impl std::fmt::Display + '_ {
         self
@@ -215,6 +301,14 @@ pub enum TriggerSlope {
 }
 
 impl TriggerSlope {
+    pub fn values() -> [Self; 3] {
+        [
+            Self::Rising,
+            Self::Falling,
+            Self::Both,
+        ]
+    }
+
     // Because CLion doesn't like the Display implemented by strum.
     pub fn my_to_string(&self) -> impl std::fmt::Display + '_ {
         self
@@ -232,6 +326,14 @@ pub enum TriggerMode {
 }
 
 impl TriggerMode {
+    pub fn values() -> [Self; 3] {
+        [
+            Self::Auto,
+            Self::Single,
+            Self::Normal,
+        ]
+    }
+
     // Because CLion doesn't like the Display implemented by strum.
     pub fn my_to_string(&self) -> impl std::fmt::Display + '_ {
         self
@@ -254,6 +356,19 @@ pub enum AwgType {
 }
 
 impl AwgType {
+    pub fn values() -> [Self; 8] {
+        [
+            Self::Square,
+            Self::Ramp,
+            Self::Sin,
+            Self::Trap,
+            Self::Arb1,
+            Self::Arb2,
+            Self::Arb3,
+            Self::Arb4,
+        ]
+    }
+
     // Because CLion doesn't like the Display implemented by strum.
     pub fn my_to_string(&self) -> impl std::fmt::Display + '_ {
         self
