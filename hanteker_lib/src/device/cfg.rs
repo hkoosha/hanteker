@@ -62,6 +62,15 @@ impl DeviceFunction {
         Self::iter()
     }
 
+    pub fn my_options() -> Vec<(String, Self)> {
+        Self::my_iter()
+            .map(|it| {
+                let as_string = it.my_to_string().to_string();
+                (as_string, it)
+            })
+            .collect()
+    }
+
     // Because CLion doesn't like the Display implemented by strum.
     pub fn my_to_string(&self) -> impl std::fmt::Display + '_ {
         self
@@ -79,6 +88,15 @@ pub enum RunningStatus {
 impl RunningStatus {
     pub fn my_iter() -> impl Iterator<Item=RunningStatus> {
         Self::iter()
+    }
+
+    pub fn my_options() -> Vec<(String, Self)> {
+        Self::my_iter()
+            .map(|it| {
+                let as_string = it.my_to_string().to_string();
+                (as_string, it)
+            })
+            .collect()
     }
 
     // Because CLion doesn't like the Display implemented by strum.
@@ -101,6 +119,15 @@ impl Coupling {
         Self::iter()
     }
 
+    pub fn my_options() -> Vec<(String, Self)> {
+        Self::my_iter()
+            .map(|it| {
+                let as_string = it.my_to_string().to_string();
+                (as_string, it)
+            })
+            .collect()
+    }
+
     // Because CLion doesn't like the Display implemented by strum.
     pub fn my_to_string(&self) -> impl std::fmt::Display + '_ {
         self
@@ -120,6 +147,15 @@ pub enum Probe {
 impl Probe {
     pub fn my_iter() -> impl Iterator<Item=Probe> {
         Self::iter()
+    }
+
+    pub fn my_options() -> Vec<(String, Self)> {
+        Self::my_iter()
+            .map(|it| {
+                let as_string = it.my_to_string().to_string();
+                (as_string, it)
+            })
+            .collect()
     }
 
     // Because CLion doesn't like the Display implemented by strum.
@@ -151,6 +187,15 @@ pub enum Scale {
 impl Scale {
     pub fn my_iter() -> impl Iterator<Item=Scale> {
         Self::iter()
+    }
+
+    pub fn my_options() -> Vec<(String, Self)> {
+        Self::my_iter()
+            .map(|it| {
+                let as_string = it.my_to_string().to_string();
+                (as_string, it)
+            })
+            .collect()
     }
 
     // Because CLion doesn't like the Display implemented by strum.
@@ -223,6 +268,15 @@ impl TimeScale {
         Self::iter()
     }
 
+    pub fn my_options() -> Vec<(String, Self)> {
+        Self::my_iter()
+            .map(|it| {
+                let as_string = it.my_to_string().to_string();
+                (as_string, it)
+            })
+            .collect()
+    }
+
     // Because CLion doesn't like the Display implemented by strum.
     pub fn my_to_string(&self) -> impl std::fmt::Display + '_ {
         self
@@ -244,6 +298,15 @@ impl TriggerSlope {
         Self::iter()
     }
 
+    pub fn my_options() -> Vec<(String, Self)> {
+        Self::my_iter()
+            .map(|it| {
+                let as_string = it.my_to_string().to_string();
+                (as_string, it)
+            })
+            .collect()
+    }
+
     // Because CLion doesn't like the Display implemented by strum.
     pub fn my_to_string(&self) -> impl std::fmt::Display + '_ {
         self
@@ -263,6 +326,15 @@ pub enum TriggerMode {
 impl TriggerMode {
     pub fn my_iter() -> impl Iterator<Item=TriggerMode> {
         Self::iter()
+    }
+
+    pub fn my_options() -> Vec<(String, Self)> {
+        Self::my_iter()
+            .map(|it| {
+                let as_string = it.my_to_string().to_string();
+                (as_string, it)
+            })
+            .collect()
     }
 
     // Because CLion doesn't like the Display implemented by strum.
@@ -289,6 +361,15 @@ pub enum AwgType {
 impl AwgType {
     pub fn my_iter() -> impl Iterator<Item=AwgType> {
         Self::iter()
+    }
+
+    pub fn my_options() -> Vec<(String, Self)> {
+        Self::my_iter()
+            .map(|it| {
+                let as_string = it.my_to_string().to_string();
+                (as_string, it)
+            })
+            .collect()
     }
 
     // Because CLion doesn't like the Display implemented by strum.

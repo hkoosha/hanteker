@@ -1,5 +1,5 @@
 .PHONY: build
-build: clar
+build: clear
 	cargo build
 
 .PHONY: fmt
