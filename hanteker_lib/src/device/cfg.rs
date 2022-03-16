@@ -268,7 +268,6 @@ impl TrapDuty {
 }
 
 #[derive(Debug, Clone)]
-#[cfg_attr(feature = "gui", derive(Data))]
 pub struct HantekConfig {
     pub timeout: Option<Duration>,
 
