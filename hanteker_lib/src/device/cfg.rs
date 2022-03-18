@@ -20,13 +20,21 @@ pub struct Adjustment {
 }
 
 impl Adjustment {
-    pub fn new(upper: f32, lower: f32) -> Self {
+    pub fn new(mut upper: f32, mut lower: f32) -> Self {
+        if upper == -0.0 {
+            upper = 0.0;
+        }
+        if lower == 0.0 {
+            lower = -0.0;
+        }
+
         if upper <= lower {
             panic!(
                 "upper is less than or equal to lower, upper={} lower={}",
                 upper, lower
             );
         }
+
         Self { upper, lower }
     }
 
@@ -117,8 +125,7 @@ impl From<bool> for RunningStatus {
     fn from(started: bool) -> Self {
         if started {
             Self::Start
-        }
-        else {
+        } else {
             Self::Stop
         }
     }
