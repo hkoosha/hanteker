@@ -36,6 +36,13 @@ pub enum Hantek2D42Error {
     TriggerLevelAdjustmentError,
 }
 
+impl Hantek2D42Error {
+    // Because CLion doesn't like the Display implemented by thiserror.
+    pub fn my_to_string(&self) -> impl std::fmt::Display + '_ {
+        self
+    }
+}
+
 pub struct Hantek2D42<'a> {
     pub usb: HantekUsbDevice<'a>,
     config: HantekConfig,

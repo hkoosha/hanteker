@@ -45,6 +45,7 @@ fn main() -> anyhow::Result<()> {
     } else {
         let context = libusb::Context::new()?;
         let mut hantek = Hantek2D42::open(&context, Duration::from_millis(cli.timeout))?;
+        hantek.usb.claim()?;
         let cmd_result = handle_usb_command(&cli, &mut hantek);
         let release_result = hantek.usb.release();
         cmd_result?;

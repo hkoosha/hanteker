@@ -59,6 +59,13 @@ pub enum HantekUsbError {
     NoInterfaceClaimed,
 }
 
+impl HantekUsbError {
+    // Because CLion doesn't like the Display implemented by thiserror.
+    pub fn my_to_string(&self) -> impl std::fmt::Display + '_ {
+        self
+    }
+}
+
 pub struct HantekUsbDevice<'a> {
     timeout: Duration,
     claimed_interface: Option<u8>,

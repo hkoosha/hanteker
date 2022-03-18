@@ -103,6 +103,25 @@ impl RunningStatus {
     pub fn my_to_string(&self) -> impl std::fmt::Display + '_ {
         self
     }
+
+    pub fn is_start(&self) -> bool {
+        *self == Self::Start
+    }
+
+    pub fn is_stop(&self) -> bool {
+        *self == Self::Stop
+    }
+}
+
+impl From<bool> for RunningStatus {
+    fn from(started: bool) -> Self {
+        if started {
+            Self::Start
+        }
+        else {
+            Self::Stop
+        }
+    }
 }
 
 #[derive(Display, Debug, Clone, EnumString, EnumIter, EnumVariantNames, PartialEq, Eq)]
