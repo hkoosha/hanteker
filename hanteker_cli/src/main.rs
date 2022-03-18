@@ -6,7 +6,7 @@ use pretty_env_logger::formatted_builder;
 
 use hanteker_lib::models::hantek2d42::Hantek2D42;
 
-use crate::cli::{cli_parse, Cli, Commands};
+use crate::cli::{Cli, cli_parse, Commands};
 use crate::handler::{
     handle_awg, handle_capture, handle_channel, handle_device, handle_print, handle_scope,
     handle_shell,
@@ -16,22 +16,17 @@ mod cli;
 mod handler;
 
 fn init_log(silent: usize, verbose: usize) {
+    let filter = match (silent, verbose) {
+        (1, _) => "WARN",
+        (2, _) => "ERROR",
+        (s, _) if s > 2 => "",
+        (_, 1) => "DEBUG",
+        (_, v) if v >= 2 => "TRACE",
+        _ => "INFO",
+    };
+
     let mut builder = formatted_builder();
-
-    if silent == 1 {
-        builder.parse_filters("WARN");
-    } else if silent == 2 {
-        builder.parse_filters("ERROR");
-    } else if silent > 2 {
-        builder.parse_filters("");
-    } else if verbose == 1 {
-        builder.parse_filters("DEBUG");
-    } else if verbose >= 2 {
-        builder.parse_filters("TRACE");
-    } else {
-        builder.parse_filters("INFO");
-    }
-
+    builder.parse_filters(filter);
     builder.init();
 }
 
