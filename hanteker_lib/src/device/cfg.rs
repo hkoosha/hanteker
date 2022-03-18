@@ -21,21 +21,21 @@ pub struct Adjustment {
 
 impl Adjustment {
     pub fn new(mut upper: f32, mut lower: f32) -> Self {
-        if upper == -0.0 {
+        if upper == 0.0 && lower == 0.0 {
             upper = 0.0;
+            lower = 0.0;
         }
-        if lower == 0.0 {
-            lower = -0.0;
-        }
-
-        if upper <= lower {
+        if upper < lower {
             panic!(
-                "upper is less than or equal to lower, upper={} lower={}",
-                upper, lower
+                "upper is less than or equal to lower, upper={} lower={}, upper_repr={}, lower_repr={}",
+                upper, lower, upper.to_bits(), upper.to_bits(),
             );
         }
 
-        Self { upper, lower }
+        Self {
+            lower: if lower < upper { lower } else { upper },
+            upper: if lower < upper { upper } else { lower },
+        }
     }
 
     pub fn are_limits_sane(&self) -> bool {
