@@ -1,6 +1,7 @@
 //! TODO not all types need to be float, some should actually be u32, e.g. AWG Amplitude.
 
 use std::collections::HashMap;
+use std::fmt::{Display, Formatter};
 #[cfg(feature = "gui")]
 use std::hash::Hash;
 use std::time::Duration;
@@ -20,11 +21,17 @@ pub struct Adjustment {
 }
 
 impl Adjustment {
+    pub const ZERO: Adjustment = Adjustment { lower: 0.0, upper: 0.0 };
+
     pub fn new(mut upper: f32, mut lower: f32) -> Self {
-        if upper == 0.0 && lower == 0.0 {
+        // -0.0 to 0.0.
+        if upper == 0.0 {
             upper = 0.0;
+        }
+        if lower == 0.0 {
             lower = 0.0;
         }
+
         if upper < lower {
             panic!(
                 "upper is less than or equal to lower, upper={} lower={}, upper_repr={}, lower_repr={}",
@@ -118,16 +125,6 @@ impl RunningStatus {
 
     pub fn is_stop(&self) -> bool {
         *self == Self::Stop
-    }
-}
-
-impl From<bool> for RunningStatus {
-    fn from(started: bool) -> Self {
-        if started {
-            Self::Start
-        } else {
-            Self::Stop
-        }
     }
 }
 
@@ -413,11 +410,19 @@ pub struct TrapDuty {
 }
 
 impl TrapDuty {
+    pub const ZERO: TrapDuty = TrapDuty { high: 0.0, low: 0.0, rise: 0.0 };
+
     pub fn same(&self, other: &Self) -> bool {
         (self.high == other.high && self.low == other.low && self.rise == other.rise)
             || (self.high.to_bits() == other.high.to_bits()
             && self.low.to_bits() == other.low.to_bits()
             && self.rise.to_bits() == other.rise.to_bits())
+    }
+}
+
+impl Display for TrapDuty {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "TrapDuty{{high: {}, low: {}, rise: {}}}", self.high, self.low, self.rise)
     }
 }
 
