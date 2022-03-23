@@ -21,7 +21,10 @@ pub struct Adjustment {
 }
 
 impl Adjustment {
-    pub const ZERO: Adjustment = Adjustment { lower: 0.0, upper: 0.0 };
+    pub const ZERO: Adjustment = Adjustment {
+        lower: 0.0,
+        upper: 0.0,
+    };
 
     pub fn new(mut upper: f32, mut lower: f32) -> Self {
         // -0.0 to 0.0.
@@ -59,7 +62,7 @@ impl Adjustment {
     pub fn same(&self, other: &Self) -> bool {
         (self.upper == other.upper && self.lower == other.lower)
             || (self.upper.to_bits() == other.upper.to_bits()
-            && self.lower.to_bits() == other.lower.to_bits())
+                && self.lower.to_bits() == other.lower.to_bits())
     }
 }
 
@@ -73,7 +76,7 @@ pub enum DeviceFunction {
 }
 
 impl DeviceFunction {
-    pub fn my_iter() -> impl Iterator<Item=DeviceFunction> {
+    pub fn my_iter() -> impl Iterator<Item = DeviceFunction> {
         Self::iter()
     }
 
@@ -101,7 +104,7 @@ pub enum RunningStatus {
 }
 
 impl RunningStatus {
-    pub fn my_iter() -> impl Iterator<Item=RunningStatus> {
+    pub fn my_iter() -> impl Iterator<Item = RunningStatus> {
         Self::iter()
     }
 
@@ -138,7 +141,7 @@ pub enum Coupling {
 }
 
 impl Coupling {
-    pub fn my_iter() -> impl Iterator<Item=Coupling> {
+    pub fn my_iter() -> impl Iterator<Item = Coupling> {
         Self::iter()
     }
 
@@ -168,7 +171,7 @@ pub enum Probe {
 }
 
 impl Probe {
-    pub fn my_iter() -> impl Iterator<Item=Probe> {
+    pub fn my_iter() -> impl Iterator<Item = Probe> {
         Self::iter()
     }
 
@@ -208,7 +211,7 @@ pub enum Scale {
 }
 
 impl Scale {
-    pub fn my_iter() -> impl Iterator<Item=Scale> {
+    pub fn my_iter() -> impl Iterator<Item = Scale> {
         Self::iter()
     }
 
@@ -287,7 +290,7 @@ pub enum TimeScale {
 }
 
 impl TimeScale {
-    pub fn my_iter() -> impl Iterator<Item=TimeScale> {
+    pub fn my_iter() -> impl Iterator<Item = TimeScale> {
         Self::iter()
     }
 
@@ -317,7 +320,7 @@ pub enum TriggerSlope {
 }
 
 impl TriggerSlope {
-    pub fn my_iter() -> impl Iterator<Item=TriggerSlope> {
+    pub fn my_iter() -> impl Iterator<Item = TriggerSlope> {
         Self::iter()
     }
 
@@ -347,7 +350,7 @@ pub enum TriggerMode {
 }
 
 impl TriggerMode {
-    pub fn my_iter() -> impl Iterator<Item=TriggerMode> {
+    pub fn my_iter() -> impl Iterator<Item = TriggerMode> {
         Self::iter()
     }
 
@@ -382,7 +385,7 @@ pub enum AwgType {
 }
 
 impl AwgType {
-    pub fn my_iter() -> impl Iterator<Item=AwgType> {
+    pub fn my_iter() -> impl Iterator<Item = AwgType> {
         Self::iter()
     }
 
@@ -410,19 +413,27 @@ pub struct TrapDuty {
 }
 
 impl TrapDuty {
-    pub const ZERO: TrapDuty = TrapDuty { high: 0.0, low: 0.0, rise: 0.0 };
+    pub const ZERO: TrapDuty = TrapDuty {
+        high: 0.0,
+        low: 0.0,
+        rise: 0.0,
+    };
 
     pub fn same(&self, other: &Self) -> bool {
         (self.high == other.high && self.low == other.low && self.rise == other.rise)
             || (self.high.to_bits() == other.high.to_bits()
-            && self.low.to_bits() == other.low.to_bits()
-            && self.rise.to_bits() == other.rise.to_bits())
+                && self.low.to_bits() == other.low.to_bits()
+                && self.rise.to_bits() == other.rise.to_bits())
     }
 }
 
 impl Display for TrapDuty {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "TrapDuty{{high: {}, low: {}, rise: {}}}", self.high, self.low, self.rise)
+        write!(
+            f,
+            "TrapDuty{{high: {}, low: {}, rise: {}}}",
+            self.high, self.low, self.rise
+        )
     }
 }
 
