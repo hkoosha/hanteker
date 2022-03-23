@@ -6,7 +6,7 @@ use pretty_env_logger::formatted_builder;
 
 use hanteker_lib::models::hantek2d42::Hantek2D42;
 
-use crate::cli::{Cli, cli_parse, Commands};
+use crate::cli::{cli_parse, Cli, Commands};
 use crate::handler::{
     handle_awg, handle_capture, handle_channel, handle_device, handle_print, handle_scope,
     handle_shell,

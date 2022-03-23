@@ -1,6 +1,6 @@
-use std::{env, io};
 use std::fmt::Display;
 use std::io::Write;
+use std::{env, io};
 
 use anyhow::bail;
 use clap_complete::generate;
@@ -8,7 +8,7 @@ use hanteker_lib::device::cfg::DeviceFunction;
 use hanteker_lib::models::hantek2d42::Hantek2D42;
 use log::{error, warn};
 
-use crate::cli::{AwgCli, CaptureCli, ChannelCli, Cli, cli_command, DeviceCli, ScopeCli, ShellCli};
+use crate::cli::{cli_command, AwgCli, CaptureCli, ChannelCli, Cli, DeviceCli, ScopeCli, ShellCli};
 
 pub(crate) fn handle_shell(_parent: &Cli, s: &ShellCli) {
     let name = match &s.name_override {
@@ -142,8 +142,7 @@ pub(crate) fn handle_capture(
         }
         Some(num) => {
             for _ in 0..num {
-                let captured = hantek
-                    .capture(&cli.channel, cli.capture_chunk);
+                let captured = hantek.capture(&cli.channel, cli.capture_chunk);
 
                 if let Err(e) = captured {
                     // Cast to make CLion happy.
@@ -173,8 +172,8 @@ pub(crate) fn handle_awg(
 
     if (cli.duty_trap_high.is_some() || cli.duty_trap_low.is_some() || cli.duty_trap_rise.is_some())
         && (cli.duty_trap_high.is_none()
-        || cli.duty_trap_rise.is_none()
-        || cli.duty_trap_low.is_none())
+            || cli.duty_trap_rise.is_none()
+            || cli.duty_trap_low.is_none())
     {
         bail!("When specifying duty for trap, all three duties must be specified at the same time: high, low and rise.");
     }
