@@ -404,6 +404,10 @@ impl<'a> Hantek2D42<'a> {
         channels: &[usize],
         num_samples: usize,
     ) -> Result<Vec<u8>, Hantek2D42Error> {
+        if num_samples < 64 {
+            panic!("minimum number of samples is 64, asked for={}", num_samples);
+        }
+
         for channel_no in channels {
             self.assert_channel_no(*channel_no);
         }
@@ -413,6 +417,10 @@ impl<'a> Hantek2D42<'a> {
             let ch2 = if channels.contains(&2) { 1 } else { 0 };
             ch1 + ch2
         };
+
+        if num_channels == 0 {
+            panic!("no channel selected for capture");
+        }
 
         let cmd: RawCommand = Self::cmd(FUNC_SCOPE_CAPTURE)
             .set_cmd(SCOPE_START_RECV)
